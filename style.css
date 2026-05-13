@@ -551,7 +551,7 @@ h2{
 /* SERVICES */
 .services{
     padding: 100px 0;
-    background: linear-gradient(rgba(28,16,21,0.88), rgba(28,16,21,0.88)), url(images/bg.jpg);
+    background: linear-gradient(rgba(28,16,21,0.88), rgba(28,16,21,0.88));
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
