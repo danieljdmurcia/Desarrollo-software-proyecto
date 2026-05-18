@@ -551,7 +551,7 @@ h2{
 /* SERVICES */
 .services{
     padding: 100px 0;
-    background: linear-gradient(rgba(28,16,21,0.88), rgba(28,16,21,0.88)), url(images/bg.jpg);
+    background: linear-gradient(rgba(28,16,21,0.88), rgba(28,16,21,0.88));
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -615,7 +615,7 @@ h2{
 
 .general-2{
     width: 50%;
-    background-image: url(images/general1.jpg);
+    background-image: url(../images/general1.jpg);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -623,7 +623,7 @@ h2{
 
 .general-3{
     width: 50%;
-    background-image: url(images/general2.jpg);
+    background-image: url(../images/general2.jpg);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
