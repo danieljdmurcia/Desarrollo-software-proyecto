@@ -29,8 +29,8 @@ def home():
     return {"mensaje": "API Vulcaria con SOLID 🚀"}
 
 @app.get("/productos")
-def obtener_productos(db: Session = Depends(get_db)):
-    return producto_service.obtener_todos(db)
+def obtener_productos(orden: str = None, db: Session = Depends(get_db)):
+    return producto_service.obtener_todos(db, orden)
 
 @app.post("/productos")
 def crear_producto(producto: ProductoSchema, db: Session = Depends(get_db)):
