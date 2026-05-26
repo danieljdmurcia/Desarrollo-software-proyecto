@@ -65,14 +65,17 @@ header{
     width: 1140px;
     max-width: 90%;
     margin: auto;
-    height: 50px;
+    height: 100px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     position: relative;
     z-index: 100;
-    padding-top: 20px;
+    padding-top: 50px;
+    padding-bottom: 20px;
 }
+    
+
 
 header .logo{
     font-weight: bold;
@@ -84,7 +87,11 @@ header .logo{
 header nav{
     display: flex;
     align-items: center;
-    gap: 30px;
+    gap: 100px;
+}
+
+.sn-hero {
+    margin-top: 40px;
 }
 
 header nav a{
