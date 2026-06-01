@@ -6,20 +6,59 @@
     <title>Sobre Nosotros — Vulcaria</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="sobrenosotros.css">
+    <script>
+        // Aplica el tema ANTES de que cargue la página para evitar parpadeo
+    (function() {
+        const t = localStorage.getItem('theme') || 'dark';
+        if (t === 'light') {
+            document.addEventListener('DOMContentLoaded', function() {
+                document.body.classList.add('light');
+            });
+        }
+    })();
+    </script>
 </head>
 
 <body>
 
     <header>
-        <div class="logo">Vulcaria</div>
-        <nav>
-            <a href="index.html">Inicio</a>
-            <a href="#">Catálogo</a>
-            <a href="sobrenosotros.html" class="nav-active">Sobre Nosotros</a>
-        </nav>
+        <div class="header-left">
+            <a href="index.html" class="logo">Vulcaria</a>
+            <nav>
+                <div class="nav-item">
+                    <a href="#">Catálogo</a>
+                    <div class="dropdown">
+                        <a href="#">Anillos</a>
+                        <a href="#">Aretes</a>
+                        <a href="#">Collares</a>
+                        <a href="#">Pulseras</a>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="sobrenosotros.html" class="nav-active">Sobre Nosotros</a>
+                    <div class="dropdown">
+                        <a href="sobrenosotros.html#sobre-nosotros">Quiénes somos</a>
+                        <a href="sobrenosotros.html#nuestra-historia">Nuestra historia</a>
+                        <a href="sobrenosotros.html#colecciones">Colecciones</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div class="header-right">
+            <a href="#" class="icon-btn" title="Iniciar sesión">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </a>
+            <a href="#" class="icon-btn" title="Carrito">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            </a>
+            <button class="theme-btn icon-btn" id="themeToggle" title="Cambiar tema">
+                <svg id="iconSun" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <svg id="iconMoon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+        </div>
     </header>
 
-   
     <section class="sn-hero">
         <div class="sn-hero-overlay"></div>
         <div class="sn-hero-content">
@@ -28,7 +67,6 @@
             <p>Desde el primer diseño hasta la última pieza, Vulcaria nació de la pasión por el detalle y el amor por la elegancia atemporal.</p>
         </div>
     </section>
-
 
     <section id="sobre-nosotros" class="sn-quienes container">
         <div class="sn-quienes-texto">
@@ -43,11 +81,9 @@
         </div>
         <div class="sn-quienes-imagen">
             <img src="../images/general1.jpg" alt="Vulcaria — Quiénes somos">
-            
         </div>
     </section>
 
-    <!-- NUESTRA HISTORIA -->
     <section id="nuestra-historia" class="sn-historia">
         <div class="sn-historia-img sn-historia-img-left">
             <img src="../images/imgColecc/colección1.jpg" alt="Historia Vulcaria">
@@ -67,7 +103,6 @@
         </div>
     </section>
 
-    <!-- COLECCIONES -->
     <section id="colecciones" class="colecciones">
         <div class="coleccion-content container">
             <span class="sn-label" style="display:block; text-align:center; margin-bottom: 10px;">Lo que hacemos</span>
@@ -75,7 +110,6 @@
             <p class="txt-p" style="text-align:center;">
                 Cada colección nace de una inspiración distinta. Exploramos estilos, épocas y emociones para traerte piezas que realmente signifiquen algo.
             </p>
-
             <div class="colecciones-group">
                 <div class="coleccion-1">
                     <img src="../images/imgColecc/colección1.jpg" alt="Colección Clásica">
@@ -99,14 +133,12 @@
                     </div>
                 </div>
             </div>
-
             <div style="text-align:center;">
                 <a href="index.html" class="btn-1">Ver catálogo completo</a>
             </div>
         </div>
     </section>
 
-    <!-- TIPOS DE JOYAS -->
     <section class="sn-tipos container">
         <span class="sn-label" style="display:block; text-align:center; margin-bottom: 10px;">Qué trabajamos</span>
         <h2 style="text-align:center;">Categorías</h2>
@@ -142,7 +174,6 @@
         </div>
     </section>
 
-    <!-- EQUIPO -->
     <section class="sn-equipo">
         <div class="container">
             <span class="sn-label" style="display:block; text-align:center; margin-bottom: 10px;">Las personas detrás</span>
@@ -154,7 +185,6 @@
                         <img src="../images/general1.jpg" alt="Integrante 1">
                     </div>
                     <h3>Integrante 1</h3>
-                    
                     <p>Responsable del diseño visual y la experiencia de usuario de Vulcaria.</p>
                 </div>
                 <div class="sn-equipo-card sn-equipo-card--featured">
@@ -162,7 +192,6 @@
                         <img src="../images/general2.jpg" alt="Integrante 2">
                     </div>
                     <h3>Integrante 2</h3>
-                    
                     <p>Arquitectura del sistema, base de datos y lógica de negocio de la plataforma.</p>
                 </div>
                 <div class="sn-equipo-card">
@@ -170,102 +199,61 @@
                         <img src="../images/imgColecc/colección1.jpg" alt="Integrante 3">
                     </div>
                     <h3>Integrante 3</h3>
-                    
                     <p>Curaduría del catálogo, gestión de productos y contenido de la tienda.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- BLOG-->
-    <section id="blog" class="sn-blog">
-        <div class="container">
-            <span class="sn-label" style="display:block; text-align:center; margin-bottom: 10px;">Aprende con nosotros</span>
-            <h2 style="text-align:center;">Blog</h2>
-            <p class="txt-p" style="text-align:center;">Consejos, tendencias e historias del mundo de la joyería que no te puedes perder.</p>
 
-            <div class="sn-blog-articulo">
-                <div class="sn-blog-articulo-img">
-                    <img src="../images/blog/blog1.jpg" alt="Cuida tus joyas">
-                    <span class="sn-blog-tag">Cuidado</span>
-                </div>
-                <div class="sn-blog-articulo-texto">
-                    <h3>Cuida tus joyas: guía completa de mantenimiento</h3>
-                    <p>Las joyas son inversiones de por vida, pero solo si las tratas con el cuidado que merecen. El enemigo número uno de tus piezas no es el tiempo, sino el descuido: guardarlas mal, exponerlas a químicos o simplemente no limpiarlas a tiempo puede opacar incluso el oro más puro.</p>
-                    <p>Para las piezas de oro, limpia con un paño suave y agua tibia con unas gotas de jabón neutro. Evita el cloro a toda costa — destruye los metales desde adentro. Para la plata, un paño especial anti-oxidación hace maravillas. Guarda cada pieza en una bolsita individual para evitar rayones por contacto.</p>
-                    <p>Regla de oro : la joya es lo último que te pones al salir y lo primero que te quitas al llegar. Así evitas contacto con perfumes, cremas y sudor que aceleran el deterioro.</p>
-                </div>
-            </div>
 
-            <div class="sn-blog-articulo sn-blog-articulo--reverse">
-                <div class="sn-blog-articulo-img">
-                    <img src="../images/blog/blog2.jpg" alt="Tendencias 2026">
-                    <span class="sn-blog-tag">Tendencias</span>
-                </div>
-                <div class="sn-blog-articulo-texto">
-                    <h3>Tendencias 2026: lo que está marcando la joyería este año</h3>
-                    <p>El 2026 llegó con una propuesta clara en el mundo de la joyería: menos es más, pero con carácter. Los diseños minimalistas con detalles asimétricos están dominando las colecciones de las marcas más reconocidas, y la tendencia está filtrando hacia todas las gamas del mercado.</p>
-                    <p>Los metales mate están desplazando al acabado espejo. El oro rosa sigue fuerte pero ahora comparte escena con el oro verde — un tono cálido y terroso que se lleva increíble con piedras naturales como el ópalo y la turquesa. En cuanto a piedras, el período de diamantes perfectos está cediendo espacio a las imperfecciones: piedras brutas y sin tallar que lucen más auténticas.</p>
-                    <p>La personalización también es protagonista: piezas con iniciales, fechas y coordenadas geográficas de lugares especiales. La joya como objeto de memoria personal es la tendencia más poderosa del año.</p>
-                </div>
-            </div>
-
-            <div class="sn-blog-articulo">
-                <div class="sn-blog-articulo-img">
-                    <img src="../images/blog/blog3.jpg" alt="El anillo ideal">
-                    <span class="sn-blog-tag">Guía</span>
-                </div>
-                <div class="sn-blog-articulo-texto">
-                    <h3>Cómo elegir el anillo ideal: guía práctica y honesta</h3>
-                    <p>Elegir un anillo — ya sea de compromiso, de uso diario o de celebración — es una decisión que va mucho más allá del precio o la apariencia. El anillo perfecto es el que va a seguir siendo perfecto dentro de diez años, y eso depende de factores que muchos ignoran al momento de comprar.</p>
-                    <p>Primero, el metal: el oro 18k es el equilibrio ideal entre dureza y pureza. El oro 14k es más resistente y económico. La plata de ley es hermosa pero requiere más mantenimiento. El oro blanco es popular pero ten en cuenta que su acabado rodio necesita renovarse cada cierto tiempo.</p>
-                    <p>Segundo, la talla: muchas personas no saben su talla de anillo. En cualquier joyería te la miden gratis. Un anillo muy ajustado corta la circulación; uno muy suelto, lo pierdes. Tercero, el estilo: solitario para algo clásico e intemporal, pavé para quienes aman el brillo, banda lisa para lo minimalista. No elijas con el corazón acelerado — elige con la mente clara.</p>
-                </div>
-            </div>
+<footer class="footer">
+    <div class="footer-content container">
+        <div class="link">
+            <h3>Vulcaria</h3>
+            <ul>
+                <li><a href="sobrenosotros.html#sobre-nosotros">Sobre nosotros</a></li>
+                <li><a href="sobrenosotros.html#nuestra-historia">Nuestra historia</a></li>
+                <li><a href="sobrenosotros.html#colecciones">Colecciones</a></li>
+            </ul>
         </div>
-    </section>
 
-    <!-- FOOTER -->
-    <footer class="footer">
-        <div class="footer-content container">
-            <div class="link">
-                <h3>Vulcaria</h3>
-                <ul>
-                    <li><a href="#sobre-nosotros">Sobre nosotros</a></li>
-                    <li><a href="#nuestra-historia">Nuestra historia</a></li>
-                    <li><a href="#colecciones">Colecciones</a></li>
-                    <li><a href="#blog">Blog</a></li>
-                </ul>
-            </div>
-            <div class="link">
-                <h3>Productos</h3>
-                <ul>
-                    <li><a href="#">Anillos</a></li>
-                    <li><a href="#">Collares</a></li>
-                    <li><a href="#">Pulseras</a></li>
-                    <li><a href="#">Aretes</a></li>
-                </ul>
-            </div>
-            <div class="link">
-                <h3>Servicios</h3>
-                <ul>
-                    <li><a href="#">Personalización</a></li>
-                    <li><a href="#">Reparación</a></li>
-                    <li><a href="#">Asesoría</a></li>
-                    <li><a href="#">Mantenimiento</a></li>
-                </ul>
-            </div>
-            <div class="link">
-                <h3>Contacto</h3>
-                <ul>
-                    <li><a href="#">WhatsApp</a></li>
-                    <li><a href="#">Correo</a></li>
-                    <li><a href="#">Ubicación</a></li>
-                    <li><a href="#">Redes sociales</a></li>
-                </ul>
-            </div>
+        <div class="link">
+            <h3>Productos</h3>
+            <ul>
+                <li><a href="#">Anillos</a></li>
+                <li><a href="#">Aretes</a></li>
+                <li><a href="#">Collares</a></li>
+                <li><a href="#">Pulseras</a></li>
+            </ul>
         </div>
-    </footer>
+
+        <div class="link">
+            <h3>Contacto</h3>
+            <ul>
+                <li><a href="#">WhatsApp</a></li>
+                <li><a href="#">Correo</a></li>
+                <li><a href="#">Ubicación</a></li>
+            </ul>
+        </div>
+
+        <div class="link">
+            <h3>Síguenos</h3>
+            <ul>
+                <li><a href="#">Instagram</a></li>
+                <li><a href="#">Facebook</a></li>
+                <li><a href="#">TikTok</a></li>
+                <li><a href="#">Pinterest</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer-bottom container">
+        <p>© 2026 Vulcaria. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+    <script src="app.js"></script>
 
 </body>
 </html>
