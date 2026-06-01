@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Sobre Nosotros — Vulcaria{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/sobrenosotros.css">
+{% endblock %}
+
+{% block content %}
+
+    <section class="sn-hero">
+        <div class="sn-hero-overlay"></div>
+        <div class="sn-hero-content">
+            <span class="sn-label">Nuestra historia</span>
+            <h1>Joyas que cuentan<br><em>quiénes somos</em></h1>
+            <p>Desde el primer diseño hasta la última pieza, Vulcaria nació de la pasión por el detalle y el amor por la elegancia atemporal.</p>
+        </div>
+    </section>
+
+    <section id="sobre-nosotros" class="sn-quienes container">
+        <div class="sn-quienes-texto">
+            <span class="sn-label">¿Quiénes somos?</span>
+            <h2>Más que una joyería</h2>
+            <p class="txt-p">
+                Vulcaria es una marca de joyería artesanal nacida de tres estudiantes con una visión compartida: crear piezas que vayan más allá del accesorio. Cada joya que diseñamos lleva consigo una intención, una historia y un cuidado obsesivo por los materiales y el acabado.
+            </p>
+            <p class="txt-p" style="margin-top: -20px;">
+                Trabajamos con metales de alta calidad, piedras seleccionadas y técnicas que mezclan tradición y modernidad. No vendemos joyas en masa; ofrecemos piezas únicas para momentos únicos.
+            </p>
+        </div>
+        <div class="sn-quienes-imagen">
+            <img src="/static/images/general1.jpg" alt="Vulcaria — Quiénes somos">
+        </div>
+    </section>
+
+    <section id="nuestra-historia" class="sn-historia">
+        <div class="sn-historia-img sn-historia-img-left">
+            <img src="/static/images/imgColecc/colecci%C3%B3n1.jpg" alt="Historia Vulcaria">
+        </div>
+        <div class="sn-historia-texto">
+            <span class="sn-label">Nuestra historia</span>
+            <h2>Diseños que<br>cuentan historias</h2>
+            <p>Todo comenzó con un boceto en papel y la pregunta: ¿por qué las joyas bonitas tienen que ser inaccesibles? Vulcaria nació como respuesta a esa pregunta — una propuesta que une calidad artesanal con diseño contemporáneo.</p>
+            <p style="margin-top: 18px;">A lo largo de nuestra trayectoria hemos explorado diferentes técnicas, materiales y estilos hasta construir una identidad propia: elegante, moderna y con alma.</p>
+        </div>
+        <div class="sn-historia-img sn-historia-img-right">
+            <img src="/static/images/general2.jpg" alt="Historia Vulcaria 2">
+        </div>
+    </section>
+
+    <section id="colecciones" class="colecciones">
+        <div class="coleccion-content container">
+            <span class="sn-label" style="display:block; text-align:center; margin-bottom: 10px;">Lo que hacemos</span>
+            <h2 style="text-align:center;">Nuestras colecciones</h2>
+            <p class="txt-p" style="text-align:center;">Cada colección nace de una inspiración distinta. Exploramos estilos, épocas y emociones para traerte piezas que realmente signifiquen algo.</p>
+            <div class="colecciones-group">
+                <div class="coleccion-1">
+                    <img src="/static/images/imgColecc/colecci%C3%B3n1.jpg" alt="Colección Clásica">
+                    <div class="coleccion-info">
+                        <h3>Colección Clásica</h3>
+                        <p>Joyas que combinan tradición, delicadeza y elegancia.</p>
+                    </div>
+                </div>
+                <div class="coleccion-2">
+                    <img src="/static/images/imgColecc/colecci%C3%B3n2.jpg" alt="Colección Moderna">
+                    <div class="coleccion-info">
+                        <h3>Colección Moderna</h3>
+                        <p>Diseños contemporáneos con un toque de lujo y estilo.</p>
+                    </div>
+                </div>
+                <div class="coleccion-3">
+                    <img src="/static/images/imgColecc/colecci%C3%B3n3.jpg" alt="Colección Exclusiva">
+                    <div class="coleccion-info">
+                        <h3>Colección Exclusiva</h3>
+                        <p>Piezas pensadas para resaltar tu esencia en momentos únicos.</p>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align:center;">
+                <a href="/" class="btn-1">Ver catálogo completo</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="sn-equipo">
+        <div class="container">
+            <span class="sn-label" style="display:block; text-align:center; margin-bottom: 10px;">Las personas detrás</span>
+            <h2 style="text-align:center;">Nuestro equipo</h2>
+            <p class="txt-p" style="text-align:center;">Tres estudiantes con una misión: demostrar que el buen diseño y la tecnología pueden crear algo extraordinario.</p>
+            <div class="sn-equipo-grid">
+                <div class="sn-equipo-card">
+                    <div class="sn-equipo-avatar">
+                        <img src="/static/images/general1.jpg" alt="Integrante 1">
+                    </div>
+                    <h3>Integrante 1</h3>
+                    <p>Responsable del diseño visual y la experiencia de usuario de Vulcaria.</p>
+                </div>
+                <div class="sn-equipo-card sn-equipo-card--featured">
+                    <div class="sn-equipo-avatar">
+                        <img src="/static/images/general2.jpg" alt="Integrante 2">
+                    </div>
+                    <h3>Integrante 2</h3>
+                    <p>Arquitectura del sistema, base de datos y lógica de negocio de la plataforma.</p>
+                </div>
+                <div class="sn-equipo-card">
+                    <div class="sn-equipo-avatar">
+                        <img src="/static/images/imgColecc/colecci%C3%B3n1.jpg" alt="Integrante 3">
+                    </div>
+                    <h3>Integrante 3</h3>
+                    <p>Curaduría del catálogo, gestión de productos y contenido de la tienda.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content container">
+            <div class="link">
+                <h3>Vulcaria</h3>
+                <ul>
+                    <li><a href="/sobre-nosotros">Sobre nosotros</a></li>
+                    <li><a href="#">Servicios</a></li>
+                </ul>
+            </div>
+            <div class="link">
+                <h3>Productos</h3>
+                <ul>
+                    <li><a href="#">Anillos</a></li>
+                    <li><a href="#">Aretes</a></li>
+                    <li><a href="#">Collares</a></li>
+                    <li><a href="#">Pulseras</a></li>
+                </ul>
+            </div>
+            <div class="link">
+                <h3>Contacto</h3>
+                <ul>
+                    <li><a href="#">WhatsApp</a></li>
+                    <li><a href="#">Correo</a></li>
+                    <li><a href="#">Ubicación</a></li>
+                </ul>
+            </div>
+            <div class="link">
+                <h3>Síguenos</h3>
+                <ul>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">TikTok</a></li>
+                    <li><a href="#">Pinterest</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom container">
+            <p>© 2026 Vulcaria. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+{% endblock %}
