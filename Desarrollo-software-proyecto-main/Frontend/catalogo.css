@@ -1,0 +1,510 @@
+/* ── HEADER (fix: replaces the loose "HEADER" line that breaks the CSS) ── */
+header {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    /* Sobreescribe style.css: quita el padding-top:50px y width:1140px
+       que descuadran el header en las páginas secundarias              */
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    padding: 0 60px !important;
+    min-height: 72px;
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #1c1015;
+    border-bottom: 1px solid rgba(88,79,80,0.35);
+}
+
+.carrito-btn {
+    margin-left: auto;
+    background: #584f50;
+    color: #f9f9f9;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 30px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.carrito-btn:hover {
+    background: #636c83;
+    transform: translateY(-2px);
+}
+
+.nav-activo {
+    color: #f9f9f9 !important;
+    border-bottom: 1px solid #f9f9f9;
+    padding-bottom: 2px;
+}
+
+/* ── CARRITO LATERAL ── */
+#carritoOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 200;
+}
+
+#carritoOverlay.visible { display: block; }
+
+#carritoPanel {
+    position: fixed;
+    top: 0;
+    right: -420px;
+    width: 400px;
+    height: 100vh;
+    background: #1c1015;
+    border-left: 1px solid #584f50;
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.35s ease;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+#carritoPanel.abierto { right: 0; }
+
+.carrito-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.carrito-header h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    /* Neutraliza el h2 global de style.css que tiene font-size:70px */
+    color: #f9f9f9;
+}
+
+.carrito-header button {
+    background: none;
+    border: none;
+    color: #eae8eb;
+    font-size: 20px;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.carrito-header button:hover { color: #f9f9f9; }
+
+#carritoItems {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.carrito-vacio {
+    color: #eae8eb;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 40px;
+}
+
+.carrito-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(88,79,80,0.3);
+    border-radius: 14px;
+    padding: 12px;
+    border: 1px solid rgba(234,232,235,0.1);
+}
+
+.carrito-item img {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 10px;
+    background: #584f50;
+    flex-shrink: 0;
+}
+
+.carrito-item-info { flex: 1; min-width: 0; }
+
+.carrito-item-info p {
+    font-size: 13px;
+    font-weight: 500;
+    color: #f9f9f9;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.carrito-item-info span {
+    font-size: 13px;
+    color: #eae8eb;
+}
+
+.carrito-item-qty {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.carrito-item-qty button {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1px solid rgba(234,232,235,0.3);
+    background: transparent;
+    color: #f9f9f9;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.carrito-item-qty button:hover { background: #584f50; }
+
+.carrito-item-qty span {
+    font-size: 14px;
+    font-weight: 500;
+    min-width: 16px;
+    text-align: center;
+}
+
+.carrito-item-quitar {
+    background: none;
+    border: none;
+    color: rgba(234,232,235,0.4);
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.2s;
+    padding: 4px;
+    flex-shrink: 0;
+}
+
+.carrito-item-quitar:hover { color: #d94a4a; }
+
+.carrito-footer {
+    border-top: 1px solid #584f50;
+    padding-top: 24px;
+    margin-top: 16px;
+}
+
+.carrito-total {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    color: #f9f9f9;
+}
+
+.btn-comprar {
+    width: 100%;
+    padding: 13px;
+    background: #584f50;
+    color: #f9f9f9;
+    border: none;
+    border-radius: 30px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.btn-comprar:hover {
+    background: #636c83;
+    transform: translateY(-2px);
+}
+
+/* ── HERO ── */
+.catalogo-hero {
+    text-align: center;
+    padding: 80px 20px 40px;
+}
+
+.catalogo-hero h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: #f9f9f9;
+    margin-bottom: 12px;
+}
+
+.catalogo-hero p {
+    color: #eae8eb;
+    font-size: 16px;
+}
+
+/* ── FILTROS ── */
+.filtros-section {
+    padding: 0 20px 40px;
+}
+
+.filtros-grupo {
+    background: #584f50;
+    border-radius: 20px;
+    padding: 30px 35px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+.filtro label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #eae8eb;
+    margin-bottom: 10px;
+}
+
+.filtro-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.pill {
+    padding: 7px 20px;
+    border-radius: 30px;
+    border: 1px solid rgba(234,232,235,0.3);
+    background: transparent;
+    color: #eae8eb;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.pill:hover {
+    border-color: #f9f9f9;
+    color: #f9f9f9;
+}
+
+.pill.activo {
+    background: #1c1015;
+    color: #f9f9f9;
+    border-color: #1c1015;
+}
+
+.filtro-orden select {
+    padding: 9px 20px;
+    border-radius: 30px;
+    border: 1px solid rgba(234,232,235,0.3);
+    background: rgba(28,16,21,0.5);
+    color: #f9f9f9;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+    transition: border 0.3s;
+}
+
+.filtro-orden select:focus { border-color: #f9f9f9; }
+.filtro-orden select option { background: #1c1015; }
+
+.filtros-resumen {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px;
+}
+
+.filtros-resumen span {
+    color: #eae8eb;
+    font-size: 14px;
+}
+
+.btn-limpiar {
+    background: none;
+    border: none;
+    color: #636c83;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color 0.3s;
+}
+
+.btn-limpiar:hover { color: #f9f9f9; }
+
+/* ── GRID ── */
+.catalogo-grid-section {
+    padding: 0 20px 100px;
+}
+
+.catalogo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.cargando, .sin-resultados {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 80px 20px;
+    color: #eae8eb;
+    font-size: 16px;
+}
+
+.sin-resultados p { margin-bottom: 20px; }
+
+/* ── CARDS ── */
+.joya-card {
+    background: #584f50;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.joya-card:hover { transform: translateY(-8px); }
+
+.joya-img-wrap {
+    position: relative;
+    background: rgba(28,16,21,0.4);
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.joya-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.joya-card:hover .joya-img-wrap img { transform: scale(1.05); }
+
+.joya-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #1c1015;
+    color: #f9f9f9;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 4px 12px;
+    border-radius: 30px;
+}
+
+.joya-info {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+/* Neutraliza el h3 que style.css no toca, pero limpiamos por si acaso */
+.joya-info h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #f9f9f9;
+    margin-bottom: 6px;
+    line-height: 1.4;
+}
+
+.joya-desc {
+    font-size: 13px;
+    color: #eae8eb;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.joya-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.joya-meta span {
+    font-size: 12px;
+    color: #eae8eb;
+    background: rgba(28,16,21,0.4);
+    padding: 4px 12px;
+    border-radius: 30px;
+    border: 1px solid rgba(234,232,235,0.15);
+}
+
+.joya-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    gap: 12px;
+}
+
+.joya-precio {
+    font-size: 18px;
+    font-weight: 700;
+    color: #f9f9f9;
+    white-space: nowrap;
+}
+
+.btn-carrito {
+    padding: 8px 20px;
+    border-radius: 30px;
+    border: none;
+    background: #1c1015;
+    color: #f9f9f9;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.btn-carrito:hover {
+    background: #636c83;
+    transform: translateY(-2px);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 991px) {
+    header { padding: 0 24px !important; gap: 20px !important; }
+    header nav { gap: 20px !important; }
+    .catalogo-grid { grid-template-columns: repeat(2, 1fr); }
+    .catalogo-hero h1 { font-size: 2.5rem; }
+    #carritoPanel { width: 100%; right: -100%; }
+}
+
+@media (max-width: 600px) {
+    header nav { display: none; }
+    .catalogo-grid { grid-template-columns: 1fr; }
+    .filtros-grupo { padding: 20px; }
+    .catalogo-hero h1 { font-size: 2rem; }
+}
