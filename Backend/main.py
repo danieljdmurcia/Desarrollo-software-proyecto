@@ -1,6 +1,7 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, Request, Depends, HTTPException
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
-from fastapi.middleware.cors import CORSMiddleware
 from Backend import models
 from Backend.database import engine, SessionLocal
 from Backend.schemas import ProductoSchema
@@ -10,12 +11,9 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Conectar carpetas estáticas y templates
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
 
 def get_db():
     db = SessionLocal()
@@ -24,33 +22,39 @@ def get_db():
     finally:
         db.close()
 
+# ── VISTAS (páginas HTML) ──
 @app.get("/")
-def home():
-    return {"mensaje": "API Vulcaria con SOLID 🚀"}
+def home(request: Request):
+    return templates.TemplateResponse(request, "index.html")
 
-@app.get("/productos")
+@app.get("/sobre-nosotros")
+def sobre_nosotros(request: Request):
+    return templates.TemplateResponse(request, "sobrenosotros.html")
+
+# ── API (datos JSON) ──
+@app.get("/api/productos")
 def obtener_productos(orden: str = None, db: Session = Depends(get_db)):
     return producto_service.obtener_todos(db, orden)
 
-@app.post("/productos")
+@app.post("/api/productos")
 def crear_producto(producto: ProductoSchema, db: Session = Depends(get_db)):
     return producto_service.crear_producto(db, producto)
 
-@app.get("/productos/{id}")
+@app.get("/api/productos/{id}")
 def obtener_producto(id: int, db: Session = Depends(get_db)):
     item = producto_service.obtener_por_id(db, id)
     if not item:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     return item
 
-@app.put("/productos/{id}")
+@app.put("/api/productos/{id}")
 def actualizar_producto(id: int, producto: ProductoSchema, db: Session = Depends(get_db)):
     item = producto_service.actualizar_producto(db, id, producto)
     if not item:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     return item
 
-@app.delete("/productos/{id}")
+@app.delete("/api/productos/{id}")
 def eliminar_producto(id: int, db: Session = Depends(get_db)):
     item = producto_service.eliminar_producto(db, id)
     if not item:
