@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador — Vulcaria</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CSS originales del proyecto -->
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="Admin.css">
+    <!-- Estilos exclusivos del panel de administración -->
+    <style>
+        /* ── CORRECCIONES SOBRE style.css ──────────────────────────────────
+           style.css define header con width:1140px, padding-top:50px y
+           height:100px. Para el admin necesitamos un header compacto y
+           sticky, así que lo sobreescribimos solo en esta página.        */
+        header {
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important;
+            padding: 0 60px !important;
+            min-height: 68px;
+            background: #1c1015;
+            border-bottom: 1px solid rgba(88,79,80,0.4);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-sizing: border-box;
+        }
+
+        /* style.css pone gap:100px en nav — demasiado para admin */
+        header nav {
+            gap: 30px !important;
+        }
+
+        /* style.css define h2 con font-size:70px — pisa nuestros h2 de panel */
+        .panel-form h2,
+        .list-header h2 {
+            font-size: 1rem !important;
+            line-height: 1.4 !important;
+            margin-bottom: 0 !important;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 700;
+            color: #f9f9f9;
+        }
+
+        /* Variable de altura del header para cálculos internos */
+        :root { --admin-header-h: 68px; }
+
+        /* ── LOGIN OVERLAY ── */
+        #loginOverlay {
+            position: fixed; inset: 0; background: #1c1015;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000;
+        }
+        .login-box {
+            background: #211519;
+            border: 1px solid rgba(88,79,80,0.5);
+            border-radius: 24px;
+            padding: 48px 44px;
+            width: 100%; max-width: 400px;
+            text-align: center;
+        }
+        .login-box .login-icon { font-size: 42px; margin-bottom: 16px; }
+        .login-box h2 {
+            font-size: 1.1rem; font-weight: 700;
+            letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px;
+        }
+        .login-box p { font-size: 13px; color: #eae8eb; margin-bottom: 32px; }
+        .login-box input {
+            width: 100%; background: rgba(88,79,80,0.25);
+            border: 1px solid rgba(234,232,235,0.2); border-radius: 12px;
+            padding: 13px 18px; color: #f9f9f9; font-size: 14px;
+            outline: none; margin-bottom: 14px; transition: border 0.3s;
+            text-align: center; letter-spacing: 2px; font-family: 'Poppins', sans-serif;
+        }
+        .login-box input:focus { border-color: #636c83; }
+        .login-box .btn-login {
+            width: 100%; padding: 14px; background: #584f50; color: #f9f9f9;
+            border: none; border-radius: 30px; font-family: 'Poppins', sans-serif;
+            font-size: 13px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1px; cursor: pointer; transition: 0.3s;
+        }
+        .login-box .btn-login:hover { background: #636c83; }
+        .login-error {
+            color: #f87171; font-size: 12px; margin-top: 12px;
+            min-height: 18px; display: none;
+        }
+        .login-error.visible { display: block; }
+
+        /* ── HEADER: ajustes admin sobre el header original ── */
+        .nav-activo {
+            color: #f9f9f9 !important;
+            border-bottom: 1px solid #f9f9f9;
+            padding-bottom: 2px;
+        }
+        .header-right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+        .admin-badge {
+            background: #584f50; color: #f9f9f9; padding: 6px 18px;
+            border-radius: 30px; font-size: 12px; font-weight: 600;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+        .btn-cerrar-sesion {
+            background: transparent; border: 1px solid rgba(234,232,235,0.25);
+            color: #eae8eb; padding: 6px 16px; border-radius: 30px;
+            font-family: 'Poppins', sans-serif; font-size: 12px; cursor: pointer; transition: 0.2s;
+        }
+        .btn-cerrar-sesion:hover { border-color: #f87171; color: #f87171; }
+
+        /* ── LAYOUT PRINCIPAL ── */
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            min-height: calc(100vh - var(--admin-header-h));
+            align-items: start;
+        }
+
+        /* ── PANEL FORMULARIO ── */
+        .panel-form {
+            background: #211519;
+            border-right: 1px solid rgba(88,79,80,0.35);
+            padding: 36px 32px;
+            overflow-y: auto;
+            position: sticky;
+            top: var(--admin-header-h);
+            height: calc(100vh - var(--admin-header-h));
+            box-sizing: border-box;
+        }
+        .panel-form h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 28px !important;
+        }
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block; font-size: 11px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 1px;
+            color: #eae8eb; margin-bottom: 8px;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%; background: rgba(88,79,80,0.25);
+            border: 1px solid rgba(234,232,235,0.2); border-radius: 12px;
+            padding: 11px 16px; color: #f9f9f9; font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            outline: none; transition: border 0.3s;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus { border-color: #636c83; }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .form-group select option { background: #1c1015; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+        .img-upload-area {
+            border: 2px dashed rgba(234,232,235,0.25); border-radius: 14px;
+            padding: 20px; text-align: center; cursor: pointer;
+            transition: border-color 0.3s, background 0.3s; position: relative;
+        }
+        .img-upload-area:hover { border-color: #636c83; background: rgba(99,108,131,0.08); }
+        .img-upload-area input[type="file"] {
+            position: absolute; inset: 0; opacity: 0; cursor: pointer;
+            width: 100%; height: 100%; border: none; background: none;
+            border-radius: 0; padding: 0;
+        }
+        .img-upload-icon { font-size: 28px; margin-bottom: 8px; }
+        .img-upload-label { font-size: 13px; color: #eae8eb; }
+        .img-preview {
+            width: 100%; height: 160px; object-fit: cover;
+            border-radius: 10px; margin-top: 12px; display: none;
+        }
+        .img-preview.visible { display: block; }
+
+        .form-actions { display: flex; gap: 12px; margin-top: 24px; }
+        .btn-primary {
+            flex: 1; padding: 13px; background: #584f50; color: #f9f9f9;
+            border: none; border-radius: 30px; font-family: 'Poppins', sans-serif;
+            font-size: 13px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1px; cursor: pointer; transition: 0.3s ease;
+        }
+        .btn-primary:hover { background: #636c83; transform: translateY(-2px); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-secondary {
+            padding: 13px 22px; background: transparent; color: #eae8eb;
+            border: 1px solid rgba(234,232,235,0.3); border-radius: 30px;
+            font-family: 'Poppins', sans-serif; font-size: 13px; cursor: pointer; transition: 0.3s;
+        }
+        .btn-secondary:hover { border-color: #f9f9f9; color: #f9f9f9; }
+
+        /* ── PANEL LISTA ── */
+        .panel-list {
+            padding: 36px 40px;
+            overflow-y: auto;
+            min-height: calc(100vh - var(--admin-header-h));
+            box-sizing: border-box;
+        }
+        .list-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 28px; flex-wrap: wrap; gap: 14px;
+        }
+        .list-header h2 {
+            margin-bottom: 0 !important;
+        }
+        .list-stats { display: flex; gap: 20px; }
+        .stat-chip {
+            background: rgba(88,79,80,0.4); border-radius: 30px;
+            padding: 6px 16px; font-size: 12px; color: #eae8eb;
+        }
+        .stat-chip strong { color: #f9f9f9; }
+
+        .list-toolbar { display: flex; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
+        .list-toolbar input {
+            flex: 1; min-width: 200px; background: rgba(88,79,80,0.2);
+            border: 1px solid rgba(234,232,235,0.2); border-radius: 30px;
+            padding: 10px 20px; color: #f9f9f9; font-size: 13px;
+            font-family: 'Poppins', sans-serif;
+            outline: none; transition: border 0.3s;
+        }
+        .list-toolbar input:focus { border-color: #636c83; }
+        .list-toolbar select {
+            background: rgba(88,79,80,0.2); border: 1px solid rgba(234,232,235,0.2);
+            border-radius: 30px; padding: 10px 18px; color: #f9f9f9;
+            font-size: 13px; font-family: 'Poppins', sans-serif;
+            outline: none; cursor: pointer;
+        }
+        .list-toolbar select option { background: #1c1015; }
+
+        .tabla-wrap { overflow-x: auto; border-radius: 16px; border: 1px solid rgba(88,79,80,0.4); }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        thead tr { background: rgba(88,79,80,0.5); border-bottom: 1px solid rgba(234,232,235,0.1); }
+        thead th {
+            padding: 14px 16px; text-align: left; font-size: 11px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 1px; color: #eae8eb; white-space: nowrap;
+        }
+        tbody tr { border-bottom: 1px solid rgba(88,79,80,0.25); transition: background 0.2s; }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: rgba(88,79,80,0.15); }
+        tbody tr.desactivado { opacity: 0.45; }
+        td { padding: 12px 16px; vertical-align: middle; }
+        .td-img img {
+            width: 52px; height: 52px; object-fit: cover;
+            border-radius: 10px; background: #584f50;
+        }
+        .td-img .no-img {
+            width: 52px; height: 52px; border-radius: 10px;
+            background: rgba(88,79,80,0.4); display: flex;
+            align-items: center; justify-content: center; font-size: 20px;
+        }
+        .td-nombre { font-weight: 500; color: #f9f9f9; max-width: 160px; }
+        .td-nombre small {
+            display: block; color: #eae8eb; font-weight: 400;
+            font-size: 11px; margin-top: 2px;
+        }
+        .badge-tipo {
+            background: rgba(28,16,21,0.6); border: 1px solid rgba(234,232,235,0.2);
+            border-radius: 20px; padding: 3px 10px; font-size: 11px; white-space: nowrap;
+        }
+        .badge-disp {
+            padding: 4px 12px; border-radius: 20px; font-size: 11px;
+            font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .badge-disp.si { background: rgba(31,92,56,0.4); color: #4ade80; border: 1px solid rgba(74,222,128,0.3); }
+        .badge-disp.no { background: rgba(122,32,32,0.4); color: #f87171; border: 1px solid rgba(248,113,113,0.3); }
+        .acciones { display: flex; gap: 8px; }
+        .btn-acc {
+            padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(234,232,235,0.25);
+            background: transparent; color: #eae8eb; font-size: 11px; font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer; transition: 0.2s; white-space: nowrap;
+        }
+        .btn-acc:hover { background: rgba(88,79,80,0.4); color: #f9f9f9; }
+        .btn-acc.editar:hover { border-color: #636c83; }
+        .btn-acc.desactivar:hover { border-color: #f87171; color: #f87171; }
+        .btn-acc.activar:hover { border-color: #4ade80; color: #4ade80; }
+
+        .estado-tabla { text-align: center; padding: 60px 20px; color: #eae8eb; font-size: 14px; }
+        .estado-tabla .icon { font-size: 36px; margin-bottom: 12px; }
+
+        /* ── TOAST ── */
+        #toast {
+            position: fixed; bottom: 30px; right: 30px; background: #584f50;
+            color: #f9f9f9; padding: 14px 24px; border-radius: 14px; font-size: 14px;
+            font-weight: 500; z-index: 999; opacity: 0; transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s; pointer-events: none; max-width: 320px;
+        }
+        #toast.show  { opacity: 1; transform: translateY(0); }
+        #toast.error   { background: #7a2020; }
+        #toast.success { background: #1f5c38; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1100px) {
+            .admin-layout { grid-template-columns: 1fr; }
+            .panel-form {
+                position: static;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid rgba(88,79,80,0.35);
+            }
+            .panel-list {
+                padding: 24px 20px;
+                min-height: auto;
+            }
+            header {
+                padding: 0 24px !important;
+            }
+        }
+        @media (max-width: 768px) {
+            header nav { display: none !important; }
+            .form-row { grid-template-columns: 1fr; }
+            .list-stats { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── LOGIN OVERLAY (NUEVO) ── -->
+<div id="loginOverlay">
+    <div class="login-box">
+        <div class="login-icon">🔐</div>
+        <h2>Panel Admin</h2>
+        <p>Ingresa el token de administrador para continuar</p>
+        <input type="password" id="tokenInput" placeholder="Token de acceso"
+               onkeydown="if(event.key==='Enter') intentarLogin()">
+        <button class="btn-login" onclick="intentarLogin()">Ingresar</button>
+        <div class="login-error" id="loginError">Token incorrecto. Inténtalo de nuevo.</div>
+    </div>
+</div>
+
+<!-- ── TOAST (NUEVO) ── -->
+<div id="toast"></div>
+
+<!-- ── HEADER original preservado, con nav corregido y badge admin ── -->
+<header>
+    <div class="logo">Vulcaria</div>
+    <nav>
+        <a href="../index.html">Inicio</a>
+        <a href="../catalogo.html">Catálogo</a>
+        <a href="../sobrenosotros.html">Sobre Nosotros</a>
+        <a href="Admin.html" class="nav-activo">Administrador</a>
+    </nav>
+    <div class="header-right">
+        <div class="admin-badge">⚙ Panel Admin</div>
+        <button class="btn-cerrar-sesion" onclick="cerrarSesion()">Cerrar sesión</button>
+    </div>
+</header>
+
+<!-- ── LAYOUT DEL PANEL (reemplaza catálogo original) ── -->
+<div class="admin-layout">
+
+    <!-- FORMULARIO IZQUIERDO -->
+    <aside class="panel-form">
+        <h2><span>💎</span> <span id="formTitulo">Nueva Joya</span></h2>
+
+        <div class="form-group">
+            <label>Nombre *</label>
+            <input type="text" id="fNombre" placeholder="Ej. Anillo Eternidad Oro">
+        </div>
+        <div class="form-group">
+            <label>Descripción</label>
+            <textarea id="fDescripcion" placeholder="Describe la joya…"></textarea>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Precio (COP) *</label>
+                <input type="number" id="fPrecio" placeholder="150000" min="0" step="1000">
+            </div>
+            <div class="form-group">
+                <label>Tipo de joya *</label>
+                <select id="fTipo">
+                    <option value="">— Selecciona —</option>
+                    <option value="anillo">Anillo</option>
+                    <option value="collar">Collar</option>
+                    <option value="arete">Arete</option>
+                    <option value="pulsera">Pulsera</option>
+                    <option value="tobillera">Tobillera</option>
+                    <option value="broche">Broche</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Material *</label>
+                <select id="fMaterial">
+                    <option value="">— Selecciona —</option>
+                    <option value="oro">Oro</option>
+                    <option value="plata">Plata</option>
+                    <option value="oro_blanco">Oro blanco</option>
+                    <option value="acero">Acero</option>
+                    <option value="platino">Platino</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Para quién *</label>
+                <select id="fParaQuien">
+                    <option value="">— Selecciona —</option>
+                    <option value="mujer">Mujer</option>
+                    <option value="hombre">Hombre</option>
+                    <option value="niña">Niña</option>
+                    <option value="niño">Niño</option>
+                    <option value="unisex">Unisex</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Imagen del producto</label>
+            <div class="img-upload-area">
+                <input type="file" id="fImagen" accept="image/jpeg,image/png,image/webp"
+                       onchange="previewImagen(event)">
+                <div class="img-upload-icon">📷</div>
+                <div class="img-upload-label">
+                    Haz clic o arrastra una imagen<br>
+                    <small style="color:#636c83">JPG, PNG o WEBP</small>
+                </div>
+                <img class="img-preview" id="imgPreview" src="" alt="preview">
+            </div>
+        </div>
+        <div class="form-actions">
+            <button class="btn-primary" id="btnGuardar" onclick="guardarProducto()">Guardar joya</button>
+            <button class="btn-secondary" onclick="resetForm()">Cancelar</button>
+        </div>
+    </aside>
+
+    <!-- TABLA DERECHA -->
+    <main class="panel-list">
+        <div class="list-header">
+            <h2>Inventario de Joyas</h2>
+            <div class="list-stats">
+                <div class="stat-chip">Total: <strong id="statTotal">—</strong></div>
+                <div class="stat-chip">Disponibles: <strong id="statDisp">—</strong></div>
+            </div>
+        </div>
+        <div class="list-toolbar">
+            <input type="text" id="busqueda" placeholder="🔍  Buscar por nombre…"
+                   oninput="filtrarTabla()">
+            <select id="filtroDisp" onchange="filtrarTabla()">
+                <option value="">Todos los estados</option>
+                <option value="si">Disponibles</option>
+                <option value="no">No disponibles</option>
+            </select>
+            <select id="filtroTipoLista" onchange="filtrarTabla()">
+                <option value="">Todos los tipos</option>
+                <option value="anillo">Anillo</option>
+                <option value="collar">Collar</option>
+                <option value="arete">Arete</option>
+                <option value="pulsera">Pulsera</option>
+                <option value="tobillera">Tobillera</option>
+                <option value="broche">Broche</option>
+            </select>
+        </div>
+        <div class="tabla-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Material</th>
+                        <th>Para</th>
+                        <th>Precio</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaBody">
+                    <tr><td colspan="8">
+                        <div class="estado-tabla">
+                            <div class="icon">⏳</div>Cargando productos…
+                        </div>
+                    </td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<!-- ── FOOTER original preservado ── -->
+<footer class="footer">
+    <div class="footer-content container">
+        <div class="link">
+            <h3>Vulcaria</h3>
+            <ul>
+                <li><a href="../sobrenosotros.html#sobre-nosotros">Sobre nosotros</a></li>
+                <li><a href="../sobrenosotros.html#nuestra-historia">Nuestra historia</a></li>
+                <li><a href="../sobrenosotros.html#colecciones">Colecciones</a></li>
+                <li><a href="../sobrenosotros.html#blog">Blog</a></li>
+            </ul>
+        </div>
+        <div class="link">
+            <h3>Productos</h3>
+            <ul>
+                <li><a href="../catalogo.html">Anillos</a></li>
+                <li><a href="../catalogo.html">Collares</a></li>
+                <li><a href="../catalogo.html">Pulseras</a></li>
+                <li><a href="../catalogo.html">Aretes</a></li>
+            </ul>
+        </div>
+        <div class="link">
+            <h3>Servicios</h3>
+            <ul>
+                <li><a href="#">Personalización</a></li>
+                <li><a href="#">Reparación</a></li>
+                <li><a href="#">Asesoría</a></li>
+                <li><a href="#">Mantenimiento</a></li>
+            </ul>
+        </div>
+        <div class="link">
+            <h3>Contacto</h3>
+            <ul>
+                <li><a href="#">WhatsApp</a></li>
+                <li><a href="#">Correo</a></li>
+                <li><a href="#">Ubicación</a></li>
+                <li><a href="#">Redes sociales</a></li>
+            </ul>
+        </div>
+    </div>
+</footer>
+
+<script>
+const API = "http://localhost:8000";
+// ── Debe coincidir con VULCARIA_ADMIN_TOKEN en el backend ──
+const ADMIN_TOKEN = "vulcaria-admin-2024-token-seguro";
+
+let productos = [];
+let modoEdicion = null;        // null = crear | número = id a editar
+let imagenUrlPendiente = "";   // URL de imagen ya subida al servidor
+
+/* ════════════════════════════════════
+   LOGIN
+════════════════════════════════════ */
+function intentarLogin() {
+    const val = document.getElementById("tokenInput").value.trim();
+    const err = document.getElementById("loginError");
+    if (val === ADMIN_TOKEN) {
+        sessionStorage.setItem("vulcaria_admin", "ok");
+        document.getElementById("loginOverlay").style.display = "none";
+        cargarProductos();
+    } else {
+        err.classList.add("visible");
+        document.getElementById("tokenInput").value = "";
+        setTimeout(() => err.classList.remove("visible"), 3000);
+    }
+}
+
+function cerrarSesion() {
+    sessionStorage.removeItem("vulcaria_admin");
+    location.reload();
+}
+
+// Cabeceras con token para fetch de escritura
+function authHeaders() {
+    return { "Content-Type": "application/json", "x-admin-token": ADMIN_TOKEN };
+}
+
+/* ════════════════════════════════════
+   INICIALIZACIÓN
+════════════════════════════════════ */
+window.addEventListener("DOMContentLoaded", () => {
+    if (sessionStorage.getItem("vulcaria_admin") === "ok") {
+        document.getElementById("loginOverlay").style.display = "none";
+        cargarProductos();
+    }
+});
+
+async function cargarProductos() {
+    try {
+        const res = await fetch(`${API}/productos`);
+        if (!res.ok) throw new Error();
+        productos = await res.json();
+        actualizarStats();
+        renderTabla(productos);
+    } catch {
+        document.getElementById("tablaBody").innerHTML = `
+            <tr><td colspan="8"><div class="estado-tabla">
+                <div class="icon">⚠️</div>
+                No se pudo conectar con el servidor.<br>
+                <small style="color:#636c83">Verifica que el backend esté corriendo en localhost:8000</small>
+            </div></td></tr>`;
+    }
+}
+
+function actualizarStats() {
+    document.getElementById("statTotal").textContent = productos.length;
+    document.getElementById("statDisp").textContent  = productos.filter(p => p.disponible).length;
+}
+
+/* ════════════════════════════════════
+   RENDER TABLA
+════════════════════════════════════ */
+function renderTabla(lista) {
+    const tbody = document.getElementById("tablaBody");
+    if (lista.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8"><div class="estado-tabla">
+            <div class="icon">💎</div>No hay productos que mostrar.
+        </div></td></tr>`;
+        return;
+    }
+    tbody.innerHTML = lista.map(p => {
+        const imgCell = p.imagen_url
+            ? `<img src="${API}${p.imagen_url}" alt="${p.nombre}" onerror="this.style.display='none'">`
+            : `<div class="no-img">💎</div>`;
+        const dispBadge = p.disponible
+            ? `<span class="badge-disp si">Disponible</span>`
+            : `<span class="badge-disp no">No disponible</span>`;
+        const btnEstado = p.disponible
+            ? `<button class="btn-acc desactivar" onclick="toggleDisponible(${p.id},false)">Desactivar</button>`
+            : `<button class="btn-acc activar"    onclick="toggleDisponible(${p.id},true)">Activar</button>`;
+        const desc = p.descripcion
+            ? p.descripcion.substring(0,50) + (p.descripcion.length > 50 ? '…' : '')
+            : '';
+        return `
+        <tr class="${p.disponible ? '' : 'desactivado'}">
+            <td class="td-img">${imgCell}</td>
+            <td class="td-nombre">${p.nombre}<small>${desc}</small></td>
+            <td><span class="badge-tipo">${p.tipo || '—'}</span></td>
+            <td>${p.material   || '—'}</td>
+            <td>${p.para_quien || '—'}</td>
+            <td style="font-weight:600;white-space:nowrap">$${Number(p.precio).toLocaleString('es-CO')}</td>
+            <td>${dispBadge}</td>
+            <td><div class="acciones">
+                <button class="btn-acc editar" onclick="cargarEdicion(${p.id})">✏ Editar</button>
+                ${btnEstado}
+            </div></td>
+        </tr>`;
+    }).join("");
+}
+
+/* ════════════════════════════════════
+   FILTRO LOCAL
+════════════════════════════════════ */
+function filtrarTabla() {
+    const busq = document.getElementById("busqueda").value.toLowerCase();
+    const disp = document.getElementById("filtroDisp").value;
+    const tipo = document.getElementById("filtroTipoLista").value;
+    renderTabla(productos.filter(p => {
+        const mN = p.nombre.toLowerCase().includes(busq);
+        const mD = disp === ""  ? true : disp === "si" ? p.disponible : !p.disponible;
+        const mT = !tipo || p.tipo === tipo;
+        return mN && mD && mT;
+    }));
+}
+
+/* ════════════════════════════════════
+   IMAGEN PREVIEW
+════════════════════════════════════ */
+function previewImagen(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const preview = document.getElementById("imgPreview");
+    preview.src = URL.createObjectURL(file);
+    preview.classList.add("visible");
+}
+
+/* ════════════════════════════════════
+   GUARDAR (CREAR / EDITAR)
+════════════════════════════════════ */
+async function guardarProducto() {
+    const nombre      = document.getElementById("fNombre").value.trim();
+    const descripcion = document.getElementById("fDescripcion").value.trim();
+    const precio      = parseFloat(document.getElementById("fPrecio").value);
+    const tipo        = document.getElementById("fTipo").value;
+    const material    = document.getElementById("fMaterial").value;
+    const para_quien  = document.getElementById("fParaQuien").value;
+    const fileInput   = document.getElementById("fImagen");
+
+    if (!nombre || isNaN(precio) || precio < 0 || !tipo || !material || !para_quien) {
+        toast("Completa todos los campos obligatorios (*)", "error"); return;
+    }
+
+    const btn = document.getElementById("btnGuardar");
+    btn.disabled = true; btn.textContent = "Guardando…";
+
+    try {
+        // 1. Subir imagen si hay archivo nuevo seleccionado
+        let imagen_url = imagenUrlPendiente;
+        if (fileInput.files.length > 0) {
+            const fd = new FormData();
+            fd.append("file", fileInput.files[0]);
+            const imgRes = await fetch(`${API}/productos/imagen`, {
+                method: "POST",
+                headers: { "x-admin-token": ADMIN_TOKEN },  // sin Content-Type (multipart automático)
+                body: fd
+            });
+            if (!imgRes.ok) throw new Error("Error al subir imagen");
+            imagen_url = (await imgRes.json()).imagen_url;
+        }
+
+        const payload = { nombre, descripcion, precio, tipo, material, para_quien, imagen_url, disponible: true };
+
+        // 2. Crear o actualizar según modo
+        let res;
+        if (modoEdicion === null) {
+            res = await fetch(`${API}/productos`, {
+                method: "POST", headers: authHeaders(), body: JSON.stringify(payload)
+            });
+        } else {
+            // Preservar disponible original al editar
+            const original = productos.find(p => p.id === modoEdicion);
+            payload.disponible = original ? original.disponible : true;
+            res = await fetch(`${API}/productos/${modoEdicion}`, {
+                method: "PUT", headers: authHeaders(), body: JSON.stringify(payload)
+            });
+        }
+        if (!res.ok) throw new Error("Error del servidor");
+
+        toast(modoEdicion === null ? "✅ Joya creada exitosamente" : "✅ Joya actualizada", "success");
+        resetForm();
+        await cargarProductos();
+    } catch (err) {
+        toast("❌ " + (err.message || "Error al guardar"), "error");
+    } finally {
+        btn.disabled = false;
+        btn.textContent = modoEdicion === null ? "Guardar joya" : "Actualizar joya";
+    }
+}
+
+/* ════════════════════════════════════
+   CARGAR EDICIÓN
+════════════════════════════════════ */
+function cargarEdicion(id) {
+    const p = productos.find(x => x.id === id);
+    if (!p) return;
+    modoEdicion = id;
+    imagenUrlPendiente = p.imagen_url || "";
+
+    document.getElementById("formTitulo").textContent      = "Editar Joya";
+    document.getElementById("fNombre").value               = p.nombre;
+    document.getElementById("fDescripcion").value          = p.descripcion || "";
+    document.getElementById("fPrecio").value               = p.precio;
+    document.getElementById("fTipo").value                 = p.tipo || "";
+    document.getElementById("fMaterial").value             = p.material || "";
+    document.getElementById("fParaQuien").value            = p.para_quien || "";
+    document.getElementById("btnGuardar").textContent      = "Actualizar joya";
+
+    const preview = document.getElementById("imgPreview");
+    if (p.imagen_url) { preview.src = `${API}${p.imagen_url}`; preview.classList.add("visible"); }
+    else { preview.classList.remove("visible"); }
+
+    document.querySelector(".panel-form").scrollIntoView({ behavior: "smooth" });
+}
+
+/* ════════════════════════════════════
+   TOGGLE DISPONIBLE
+════════════════════════════════════ */
+async function toggleDisponible(id, activar) {
+    const p = productos.find(x => x.id === id);
+    if (!p) return;
+    try {
+        let res;
+        if (!activar) {
+            // DELETE hace soft-delete en el backend
+            res = await fetch(`${API}/productos/${id}`, {
+                method: "DELETE", headers: { "x-admin-token": ADMIN_TOKEN }
+            });
+        } else {
+            const payload = {
+                nombre: p.nombre, descripcion: p.descripcion || "",
+                precio: p.precio, tipo: p.tipo || "", material: p.material || "",
+                para_quien: p.para_quien || "", imagen_url: p.imagen_url || "",
+                disponible: true
+            };
+            res = await fetch(`${API}/productos/${id}`, {
+                method: "PUT", headers: authHeaders(), body: JSON.stringify(payload)
+            });
+        }
+        if (!res.ok) throw new Error();
+        toast(activar ? "✅ Joya activada" : "⛔ Joya desactivada", activar ? "success" : "");
+        await cargarProductos();
+    } catch {
+        toast("❌ No se pudo cambiar el estado", "error");
+    }
+}
+
+/* ════════════════════════════════════
+   RESET FORMULARIO
+════════════════════════════════════ */
+function resetForm() {
+    modoEdicion = null;
+    imagenUrlPendiente = "";
+    document.getElementById("formTitulo").textContent = "Nueva Joya";
+    ["fNombre","fDescripcion","fPrecio","fTipo","fMaterial","fParaQuien","fImagen"]
+        .forEach(id => document.getElementById(id).value = "");
+    const preview = document.getElementById("imgPreview");
+    preview.src = ""; preview.classList.remove("visible");
+    document.getElementById("btnGuardar").textContent = "Guardar joya";
+}
+
+/* ════════════════════════════════════
+   TOAST
+════════════════════════════════════ */
+function toast(msg, tipo = "") {
+    const el = document.getElementById("toast");
+    el.textContent = msg; el.className = "show " + tipo;
+    setTimeout(() => { el.className = ""; }, 3500);
+}
+</script>
+
+</body>
+</html>
