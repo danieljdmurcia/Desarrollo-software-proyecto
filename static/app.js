@@ -65,3 +65,39 @@ if (backButton) {
         if (carousel) carousel.classList.remove("showDetail");
     };
 }
+
+// ── SESIÓN ──
+function verificarSesion() {
+    const usuarioStr = localStorage.getItem("usuario");
+    const labelLogin = document.getElementById("label-login");
+    const btnLogin = document.getElementById("btn-login");
+    const dropdownSesion = document.getElementById("dropdown-sesion");
+    const btnCerrar = document.getElementById("btn-cerrar-sesion");
+
+    if (usuarioStr && labelLogin) {
+        const u = JSON.parse(usuarioStr);
+        labelLogin.textContent = u.usuario || u.nombre;
+        btnLogin.href = "#";
+        btnLogin.title = u.usuario || u.nombre;
+
+        if (dropdownSesion) dropdownSesion.removeAttribute("style");
+
+        if (btnCerrar) {
+            btnCerrar.addEventListener("mouseover", () => {
+                btnCerrar.style.color = "#ff4444";
+            });
+            btnCerrar.addEventListener("mouseout", () => {
+                btnCerrar.style.color = "#e07070";
+            });
+            btnCerrar.addEventListener("click", (e) => {
+                e.preventDefault();
+                localStorage.removeItem("token");
+                localStorage.removeItem("usuario");
+                window.location.reload();
+            });
+        }
+    } else {
+        if (dropdownSesion) dropdownSesion.style.display = "none";
+    }
+}
+verificarSesion();
