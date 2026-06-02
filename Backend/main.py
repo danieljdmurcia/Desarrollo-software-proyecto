@@ -8,6 +8,9 @@ from Backend.schemas import ProductoSchema
 from Backend.services import producto_service
 from Backend.schemas import CitaSchema
 from Backend.services import cita_service
+from Backend.auth_schemas import RegistroSchema, LoginSchema, RecuperarSchema
+from Backend.services.auth_service import AuthService
+from Backend.repository import usuario_repo
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -88,3 +91,27 @@ def crear_cita(cita: CitaSchema, db: Session = Depends(get_db)):
 @app.get("/api/citas/horas-libres")
 def horas_libres(fecha: str, servicio: str, db: Session = Depends(get_db)):
     return cita_service.obtener_horas_libres(db, fecha, servicio)
+
+auth_service = AuthService()
+
+@app.get("/login")
+def login_page(request: Request):
+    return templates.TemplateResponse(request, "login.html")
+
+@app.post("/api/auth/registro")
+def registro(datos: RegistroSchema, db: Session = Depends(get_db)):
+    try:
+        return auth_service.registrar(db, datos.nombre, datos.usuario, datos.email, datos.password)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/auth/login")
+def login(datos: LoginSchema, db: Session = Depends(get_db)):
+    try:
+        return auth_service.login(db, datos.email, datos.password)
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail=str(e))
+
+@app.post("/api/auth/recuperar")
+async def recuperar(datos: RecuperarSchema, db: Session = Depends(get_db)):
+    return await auth_service.solicitar_recuperacion(db, datos.email)

@@ -15,12 +15,12 @@ def obtener_por_reset_token(db: Session, token: str) -> Usuario | None:
     return db.query(Usuario).filter(Usuario.reset_token == token).first()
 
 
-def crear_usuario(db: Session, nombre: str, email: str, password_hash: str) -> Usuario:
-    usuario = Usuario(nombre=nombre, email=email, password_hash=password_hash)
-    db.add(usuario)
+def crear_usuario(db: Session, nombre: str, usuario: str, email: str, password_hash: str):
+    nuevo = Usuario(nombre=nombre, usuario=usuario, email=email, password_hash=password_hash)
+    db.add(nuevo)
     db.commit()
-    db.refresh(usuario)
-    return usuario
+    db.refresh(nuevo)
+    return nuevo
 
 
 def guardar_reset_token(db: Session, usuario: Usuario, token: str, expira: datetime):

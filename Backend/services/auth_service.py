@@ -8,19 +8,19 @@ import secrets
 
 class AuthService:
 
-    def registrar(self, db: Session, nombre: str, email: str, password: str):
+    def registrar(self, db: Session, nombre: str, usuario: str, email: str, password: str):
         if usuario_repo.obtener_por_email(db, email):
             raise ValueError("Ya existe una cuenta con ese email")
         if len(password) < 8:
-            raise ValueError("La contraseña debe tener al menos 8 caracteres")
+                raise ValueError("La contraseña debe tener al menos 8 caracteres")
         hash_pw = hashear_password(password)
-        usuario = usuario_repo.crear_usuario(db, nombre, email, hash_pw)
-        token = crear_token({"sub": str(usuario.id), "email": usuario.email})
+        nuevo = usuario_repo.crear_usuario(db, nombre, usuario, email, hash_pw)
+        token = crear_token({"sub": str(nuevo.id), "email": nuevo.email})
         return {
             "access_token": token,
             "token_type": "bearer",
-            "usuario": {"id": usuario.id, "nombre": usuario.nombre, "email": usuario.email}
-        }
+            "usuario": {"id": nuevo.id, "nombre": nuevo.nombre, "usuario": nuevo.usuario, "email": nuevo.email}
+    }
 
     def login(self, db: Session, email: str, password: str):
         usuario = usuario_repo.obtener_por_email(db, email)

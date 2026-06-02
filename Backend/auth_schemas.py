@@ -3,6 +3,7 @@ from pydantic import BaseModel, EmailStr
 
 class RegistroSchema(BaseModel):
     nombre: str
+    usuario: str
     email: EmailStr
     password: str
 
