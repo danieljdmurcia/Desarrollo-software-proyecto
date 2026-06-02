@@ -29,6 +29,11 @@ def get_db():
 def home(request: Request):
     return templates.TemplateResponse(request, "index.html")
 
+@app.get("/catalogo")
+def catalogo(request: Request, db: Session = Depends(get_db)):
+    productos = producto_service.obtener_todos(db)
+    return templates.TemplateResponse(request, "catalogo.html", {"productos": productos})
+
 @app.get("/sobre-nosotros")
 def sobre_nosotros(request: Request):
     return templates.TemplateResponse(request, "sobrenosotros.html")
