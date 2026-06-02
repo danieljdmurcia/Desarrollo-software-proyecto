@@ -6,6 +6,8 @@ from Backend import models
 from Backend.database import engine, SessionLocal
 from Backend.schemas import ProductoSchema
 from Backend.services import producto_service
+from Backend.schemas import CitaSchema
+from Backend.services import cita_service
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -64,3 +66,20 @@ def eliminar_producto(id: int, db: Session = Depends(get_db)):
     if not item:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     return {"mensaje": "Producto eliminado"}
+
+# ── VISTAS CITAS ──
+@app.get("/citas")
+def citas(request: Request):
+    return templates.TemplateResponse(request, "citas.html")
+
+# ── API CITAS ──
+@app.post("/api/citas")
+def crear_cita(cita: CitaSchema, db: Session = Depends(get_db)):
+    resultado = cita_service.crear_cita(db, cita)
+    if not resultado:
+        raise HTTPException(status_code=400, detail="Hora no disponible")
+    return resultado
+
+@app.get("/api/citas/horas-libres")
+def horas_libres(fecha: str, servicio: str, db: Session = Depends(get_db)):
+    return cita_service.obtener_horas_libres(db, fecha, servicio)
