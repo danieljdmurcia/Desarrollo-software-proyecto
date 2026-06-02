@@ -1,0 +1,439 @@
+{% extends "base.html" %}
+
+{% block title %}Catálogo — Vulcaria{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/catalogo.css">
+{% endblock %}
+
+{% block content %}
+
+<section class="cat-hero sn-hero">
+    <div class="cat-hero-inner container">
+        <p class="cat-hero-sub">Colección</p>
+        <h1 class="cat-hero-title">Catálogo</h1>
+        <p class="cat-hero-desc txt-p">Cada pieza, una historia. Forjada con dedicación y pulida con pasión.</p>
+    </div>
+</section>
+
+<div class="cat-wrapper container">
+
+    <!-- ── Barra superior: filtros + orden + conteo ── -->
+    <div class="cat-topbar">
+        <div class="cat-filters" id="filterBtns">
+            <button class="filter-btn active" data-filter="todos">Todos</button>
+            <button class="filter-btn" data-filter="disponible">Disponibles</button>
+            <button class="filter-btn" data-filter="no-disponible">Sin stock</button>
+        </div>
+        <div class="cat-sort">
+            <label for="sortSelect">Ordenar:</label>
+            <select id="sortSelect">
+                <option value="">Por defecto</option>
+                <option value="precio-asc">Precio: menor a mayor</option>
+                <option value="precio-desc">Precio: mayor a menor</option>
+                <option value="nombre">Nombre A–Z</option>
+            </select>
+        </div>
+        <span class="cat-count" id="countLabel">{{ productos | length }} pieza{{ 's' if productos | length != 1 else '' }}</span>
+    </div>
+
+    <!-- ── Grid de productos ── -->
+    <div class="cat-grid" id="catGrid">
+        {% if productos %}
+            {% for p in productos %}
+            <div class="product-card"
+                 data-disponible="{{ 'true' if p.disponible else 'false' }}"
+                 data-nombre="{{ p.nombre | lower }}"
+                 data-precio="{{ p.precio }}"
+                 data-producto='{{ {"id": p.id, "nombre": p.nombre, "precio": p.precio, "disponible": p.disponible} | tojson }}'>
+
+                <div class="card-img-wrap">
+                    {# Selección de imagen según nombre del producto #}
+                    {% if 'arete' in p.nombre | lower %}
+                        {% set img = '/static/images/aretes1-removebg-preview.png' %}
+                    {% elif '2' in p.nombre %}
+                        {% set img = '/static/images/anillo2-removebg-preview.png' %}
+                    {% elif '3' in p.nombre %}
+                        {% set img = '/static/images/anillo3-removebg-preview.png' %}
+                    {% elif '4' in p.nombre %}
+                        {% set img = '/static/images/anillo4-removebg-preview.png' %}
+                    {% else %}
+                        {% set img = '/static/images/anillo1-removebg-preview.png' %}
+                    {% endif %}
+                    <img src="{{ img }}" alt="{{ p.nombre }}" loading="lazy">
+                    <div class="card-hover-overlay">
+                        <span class="overlay-cta">Ver detalle &#8599;</span>
+                    </div>
+                    {% if not p.disponible %}
+                    <span class="badge-stock">Sin stock</span>
+                    {% endif %}
+                </div>
+
+                <div class="card-body">
+                    <div class="card-meta">
+                        <span class="card-id">#{{ p.id }}</span>
+                        <span class="card-disponible {{ 'disp-si' if p.disponible else 'disp-no' }}">
+                            {{ '● Disponible' if p.disponible else '○ Agotado' }}
+                        </span>
+                    </div>
+                    <h3 class="card-name">{{ p.nombre }}</h3>
+                    <div class="card-footer">
+                        <span class="card-price">${{ "{:,.0f}".format(p.precio) }} COP</span>
+                        <button class="card-add-btn"
+                                {% if not p.disponible %}disabled{% endif %}
+                                title="Añadir al carrito">+</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="cat-empty">
+                <p>No hay productos registrados aún.</p>
+                <a href="/api/productos" class="btn-api">Ver API &#8599;</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="cat-no-results" id="noResults" style="display:none">
+        <p>No hay productos con este filtro.</p>
+    </div>
+
+</div>
+
+
+<!-- ── MODAL DE DETALLE ── -->
+<div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+        <button class="modal-close" id="modalCloseBtn" aria-label="Cerrar">&#10005;</button>
+
+        <!-- Galería -->
+        <div class="modal-left">
+            <div class="modal-img-main">
+                <img id="modalImg" src="" alt="">
+            </div>
+            <div class="modal-thumbs" id="modalThumbs"></div>
+        </div>
+
+        <!-- Info -->
+        <div class="modal-right">
+            <div class="modal-cat" id="modalCat"></div>
+            <h2 class="modal-name" id="modalTitle"></h2>
+
+            <div class="modal-price-row">
+                <span class="modal-price" id="modalPrice"></span>
+            </div>
+
+            <div class="modal-divider"></div>
+
+            <div class="modal-section">
+                <div class="modal-label">Talla</div>
+                <div class="sizes-row" id="sizesRow">
+                    <button class="size-btn active">3</button>
+                    <button class="size-btn">3 1/2</button>
+                    <button class="size-btn">4</button>
+                    <button class="size-btn">4 1/2</button>
+                    <button class="size-btn">5</button>
+                    <button class="size-btn">5 1/2</button>
+                    <button class="size-btn">6</button>
+                    <button class="size-btn">6 1/2</button>
+                    <button class="size-btn">7</button>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-label">Cantidad</div>
+                <div class="qty-row">
+                    <button class="qty-btn" id="qtyMinus">&#8722;</button>
+                    <span class="qty-val" id="qtyVal">1</span>
+                    <button class="qty-btn" id="qtyPlus">+</button>
+                </div>
+            </div>
+
+            <div class="modal-specs" id="modalSpecs"></div>
+
+            <div class="modal-divider"></div>
+
+            <div class="modal-actions" id="modalActions">
+                <button class="btn-carrito" id="btnCarrito">Añadir al carrito</button>
+                <button class="btn-comprar" id="btnComprar">Comprar ahora</button>
+            </div>
+
+            <p class="modal-note">Impuesto incluido. Los gastos de envío se calculan en la pantalla de pago.</p>
+        </div>
+
+    </div>
+</div>
+
+<!-- ── Toast ── -->
+<div class="toast" id="toast"></div>
+
+<!-- ── Footer ── -->
+<footer class="footer cat-footer">
+    <div class="footer-content container">
+        <div class="link">
+            <h3>Vulcaria</h3>
+            <ul>
+                <li><a href="/sobre-nosotros">Sobre nosotros</a></li>
+                <li><a href="/servicios">Servicios</a></li>
+            </ul>
+        </div>
+        <div class="link">
+            <h3>Productos</h3>
+            <ul>
+                <li><a href="/catalogo">Anillos</a></li>
+                <li><a href="/catalogo">Aretes</a></li>
+                <li><a href="/catalogo">Collares</a></li>
+                <li><a href="/catalogo">Pulseras</a></li>
+            </ul>
+        </div>
+        <div class="link">
+            <h3>Contacto</h3>
+            <ul>
+                <li><a href="#">WhatsApp</a></li>
+                <li><a href="#">Correo</a></li>
+                <li><a href="#">Ubicación</a></li>
+            </ul>
+        </div>
+        <div class="link">
+            <h3>Síguenos</h3>
+            <ul>
+                <li><a href="#">Instagram</a></li>
+                <li><a href="#">Facebook</a></li>
+                <li><a href="#">TikTok</a></li>
+                <li><a href="#">Pinterest</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom container">
+        <p>© 2026 Vulcaria. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+/* ── Estado ── */
+var qty = 1;
+var modalProducto = null;
+var activeFilter = 'todos';
+var carrito = JSON.parse(localStorage.getItem('vulcaria_carrito') || '[]');
+
+/* Galería de imágenes disponibles */
+var GALERIA = [
+    '/static/images/anillo1-removebg-preview.png',
+    '/static/images/anillo2-removebg-preview.png',
+    '/static/images/anillo3-removebg-preview.png',
+    '/static/images/anillo4-removebg-preview.png',
+    '/static/images/aretes1-removebg-preview.png',
+    '/static/images/aretes2-removebg-preview.png',
+    '/static/images/aretes3-removebg-preview.png',
+];
+
+/* ── Filtros ── */
+document.querySelectorAll('.filter-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(function(b) {
+            b.classList.remove('active');
+        });
+        btn.classList.add('active');
+        activeFilter = btn.dataset.filter;
+        applyFilter();
+    });
+});
+
+function applyFilter() {
+    var cards = document.querySelectorAll('.product-card');
+    var visible = 0;
+    cards.forEach(function(card) {
+        var disp = card.dataset.disponible === 'true';
+        var show = true;
+        if (activeFilter === 'disponible')    show = disp;
+        if (activeFilter === 'no-disponible') show = !disp;
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+    });
+    document.getElementById('countLabel').textContent =
+        visible + ' pieza' + (visible !== 1 ? 's' : '');
+    document.getElementById('noResults').style.display = visible === 0 ? 'block' : 'none';
+}
+
+/* ── Ordenar ── */
+document.getElementById('sortSelect').addEventListener('change', function() {
+    sortProducts(this.value);
+});
+
+function sortProducts(val) {
+    var grid = document.getElementById('catGrid');
+    var cards = Array.from(grid.querySelectorAll('.product-card'));
+    cards.sort(function(a, b) {
+        if (val === 'precio-asc')  return parseFloat(a.dataset.precio) - parseFloat(b.dataset.precio);
+        if (val === 'precio-desc') return parseFloat(b.dataset.precio) - parseFloat(a.dataset.precio);
+        if (val === 'nombre')      return a.dataset.nombre.localeCompare(b.dataset.nombre);
+        return 0;
+    });
+    cards.forEach(function(c) { grid.appendChild(c); });
+}
+
+/* ── Delegación de eventos en el grid ── */
+document.getElementById('catGrid').addEventListener('click', function(e) {
+    /* Click en botón + (añadir al carrito) */
+    var addBtn = e.target.closest('.card-add-btn');
+    if (addBtn) {
+        e.stopPropagation();
+        var card = addBtn.closest('.product-card');
+        var p = JSON.parse(card.dataset.producto);
+        addToCart(p.id, p.nombre, p.precio);
+        return;
+    }
+
+    /* Click en la tarjeta (abrir modal) */
+    var card = e.target.closest('.product-card');
+    if (card) {
+        var p = JSON.parse(card.dataset.producto);
+        openModal(p.id, p.nombre, p.precio, p.disponible);
+    }
+});
+
+/* ── Abrir modal ── */
+function openModal(id, nombre, precio, disponible) {
+    modalProducto = { id: id, nombre: nombre, precio: precio, disponible: disponible };
+    qty = 1;
+    document.getElementById('qtyVal').textContent = '1';
+
+    /* Textos */
+    document.getElementById('modalTitle').textContent = nombre;
+    document.getElementById('modalPrice').textContent =
+        '$' + precio.toLocaleString('es-CO') + ' COP';
+
+    /* Categoría inferida */
+    var esArete = nombre.toLowerCase().includes('arete');
+    document.getElementById('modalCat').textContent = esArete ? 'ARETES' : 'ANILLOS';
+
+    /* Imagen principal según nombre */
+    var img = '/static/images/anillo1-removebg-preview.png';
+    if (esArete)                   img = '/static/images/aretes1-removebg-preview.png';
+    else if (nombre.includes('2')) img = '/static/images/anillo2-removebg-preview.png';
+    else if (nombre.includes('3')) img = '/static/images/anillo3-removebg-preview.png';
+    else if (nombre.includes('4')) img = '/static/images/anillo4-removebg-preview.png';
+
+    document.getElementById('modalImg').src = img;
+    document.getElementById('modalImg').alt = nombre;
+
+    /* Thumbnails */
+    var thumbList = [img, GALERIA[id % GALERIA.length], GALERIA[(id + 1) % GALERIA.length]];
+    document.getElementById('modalThumbs').innerHTML = thumbList.map(function(src, i) {
+        return '<div class="thumb ' + (i === 0 ? 'active' : '') + '" data-src="' + src + '">'
+             + '<img src="' + src + '" alt=""></div>';
+    }).join('');
+
+    /* Tallas */
+    var sizesRow = document.getElementById('sizesRow');
+    if (esArete) {
+        sizesRow.innerHTML = '<button class="size-btn active">Talla única</button>';
+    } else {
+        sizesRow.innerHTML = [3, '3 1/2', 4, '4 1/2', 5, '5 1/2', 6, '6 1/2', 7].map(function(s, i) {
+            return '<button class="size-btn' + (i === 0 ? ' active' : '') + '">' + s + '</button>';
+        }).join('');
+    }
+    sizesRow.querySelectorAll('.size-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            sizesRow.querySelectorAll('.size-btn').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+        });
+    });
+
+    /* Especificaciones */
+    document.getElementById('modalSpecs').innerHTML =
+        '<div class="spec-item"><span class="spec-label">Material</span><span class="spec-val">Oro 18K</span></div>' +
+        '<div class="spec-item"><span class="spec-label">Piedra</span><span class="spec-val">' + (esArete ? 'Esmeralda' : 'Diamante') + '</span></div>' +
+        '<div class="spec-item"><span class="spec-label">Estilo</span><span class="spec-val">Clásico</span></div>' +
+        '<div class="spec-item"><span class="spec-label">Disponible</span><span class="spec-val" style="color:' +
+        (disponible ? '#7dbf8a' : '#bf7d7d') + '">' + (disponible ? 'Sí' : 'No') + '</span></div>';
+
+    /* Botones de acción */
+    var btns = document.getElementById('modalActions').querySelectorAll('button');
+    btns.forEach(function(b) {
+        b.disabled = !disponible;
+        b.style.opacity = disponible ? '' : '0.4';
+        b.style.cursor  = disponible ? '' : 'not-allowed';
+    });
+
+    document.getElementById('modalBackdrop').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    document.getElementById('modalBackdrop').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+/* ── Eventos del modal ── */
+document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+
+document.getElementById('modalBackdrop').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+
+/* Thumbnails (delegación) */
+document.getElementById('modalThumbs').addEventListener('click', function(e) {
+    var thumb = e.target.closest('.thumb');
+    if (!thumb) return;
+    document.querySelectorAll('#modalThumbs .thumb').forEach(function(t) { t.classList.remove('active'); });
+    thumb.classList.add('active');
+    document.getElementById('modalImg').src = thumb.dataset.src;
+});
+
+/* ── Cantidad ── */
+document.getElementById('qtyMinus').addEventListener('click', function() {
+    if (qty > 1) { qty--; document.getElementById('qtyVal').textContent = qty; }
+});
+document.getElementById('qtyPlus').addEventListener('click', function() {
+    qty++;
+    document.getElementById('qtyVal').textContent = qty;
+});
+
+/* ── Botones del modal ── */
+document.getElementById('btnCarrito').addEventListener('click', addToCartFromModal);
+
+/* ── Carrito ── */
+function addToCart(id, nombre, precio) {
+    var existing = carrito.find(function(i) { return i.id === id; });
+    if (existing) {
+        existing.qty++;
+    } else {
+        carrito.push({ id: id, nombre: nombre, precio: precio, qty: 1 });
+    }
+    localStorage.setItem('vulcaria_carrito', JSON.stringify(carrito));
+    showToast('"' + nombre + '" añadido al carrito');
+}
+
+function addToCartFromModal() {
+    if (!modalProducto || !modalProducto.disponible) return;
+    var existing = carrito.find(function(i) { return i.id === modalProducto.id; });
+    if (existing) {
+        existing.qty += qty;
+    } else {
+        carrito.push({ id: modalProducto.id, nombre: modalProducto.nombre, precio: modalProducto.precio, qty: qty });
+    }
+    localStorage.setItem('vulcaria_carrito', JSON.stringify(carrito));
+    showToast(qty + '× "' + modalProducto.nombre + '" añadido al carrito');
+    closeModal();
+}
+
+/* ── Toast ── */
+function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 3000);
+}
+
+/* ── Cerrar con Escape ── */
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+});
+</script>
+{% endblock %}
