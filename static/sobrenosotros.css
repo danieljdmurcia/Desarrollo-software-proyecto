@@ -27,7 +27,7 @@ html { scroll-behavior: smooth; }
     min-height: 520px;
     display: flex;
     align-items: center;
-    background-image: url(../images/general2.jpg);
+    background-image: url(/static/images/general2.jpg);
     background-size: cover;
     background-position: center;
     overflow: hidden;
