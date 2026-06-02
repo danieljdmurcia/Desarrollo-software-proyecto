@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Vulcaria</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="Admin.css">
+   </head>
+<body>
+
+<div class="glow"></div>
+
+<header>
+    <div class="logo">Vulcaria</div>
+    <nav>
+        <a href="../index.html">← Volver al sitio</a>
+    </nav>
+</header>
+
+<div id="loginPanel">
+    <h2>Admin Panel</h2>
+    <p>Acceso restringido — solo personal autorizado</p>
+    <input type="password" id="passInput" placeholder="Contraseña" onkeydown="if(event.key==='Enter') login()">
+    <button class="btn-1" onclick="login()">Ingresar</button>
+    <p id="error">Contraseña incorrecta ❌</p>
+</div>
+
+<div id="adminPanel">
+    <div class="admin-container">
+        <h1>Inventario</h1>
+        <p class="subtitulo">Gestiona las joyas disponibles en Vulcaria. Agrega, edita o elimina productos del catálogo.</p>
+
+        <div class="form-section">
+            <h3>Agregar Joya</h3>
+            <div class="form-group">
+                <input type="text" id="nombre" placeholder="Nombre de la joya">
+                <input type="number" id="precio" placeholder="Precio" step="0.01">
+                <select id="disponible">
+                    <option value="true">Disponible</option>
+                    <option value="false">No disponible</option>
+                </select>
+                <button class="btn-agregar" onclick="agregarProducto()">Agregar &#8599;</button>
+            </div>
+        </div>
+
+        <div class="tabla-section">
+            <h3>Productos en inventario</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Disponible</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaProductos">
+                    <tr><td colspan="5" class="tabla-vacia">Cargando inventario...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API = "https://bookish-space-yodel-7qgr9wwg4j4fxpv4-8000.app.github.dev";
+    const PASSWORD = "vulcaria2026";
+
+    function login() {
+        const pass = document.getElementById("passInput").value;
+        if (pass === PASSWORD) {
+            document.getElementById("loginPanel").style.display = "none";
+            document.getElementById("adminPanel").style.display = "block";
+            cargarProductos();
+        } else {
+            document.getElementById("error").style.display = "block";
+        }
+    }
+
+    async function cargarProductos() {
+        try {
+            const res = await fetch(`${API}/productos`);
+            const productos = await res.json();
+            const tabla = document.getElementById("tablaProductos");
+            if (productos.length === 0) {
+                tabla.innerHTML = `<tr><td colspan="5" class="tabla-vacia">No hay joyas en el inventario aún.</td></tr>`;
+                return;
+            }
+            tabla.innerHTML = "";
+            productos.forEach(p => {
+                tabla.innerHTML += `
+                    <tr>
+                        <td>${p.id}</td>
+                        <td>${p.nombre}</td>
+                        <td>$${p.precio.toLocaleString()}</td>
+                        <td class="${p.disponible ? 'disponible-si' : 'disponible-no'}">${p.disponible ? "Disponible" : "No disponible"}</td>
+                        <td>
+                            <button class="btn-edit" onclick="editarProducto(${p.id}, '${p.nombre}', ${p.precio}, ${p.disponible})">Editar</button>
+                            <button class="btn-delete" onclick="eliminarProducto(${p.id})">Eliminar</button>
+                        </td>
+                    </tr>`;
+            });
+        } catch (err) {
+            document.getElementById("tablaProductos").innerHTML =
+                `<tr><td colspan="5" class="tabla-vacia">Error al conectar con el servidor ❌</td></tr>`;
+        }
+    }
+
+    async function agregarProducto() {
+        const nombre = document.getElementById("nombre").value.trim();
+        const precio = parseFloat(document.getElementById("precio").value);
+        const disponible = document.getElementById("disponible").value === "true";
+        if (!nombre || isNaN(precio)) { alert("Por favor completa todos los campos."); return; }
+        await fetch(`${API}/productos`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nombre, precio, disponible })
+        });
+        document.getElementById("nombre").value = "";
+        document.getElementById("precio").value = "";
+        cargarProductos();
+    }
+
+    async function eliminarProducto(id) {
+        if (confirm("¿Seguro que quieres eliminar esta joya del inventario?")) {
+            await fetch(`${API}/productos/${id}`, { method: "DELETE" });
+            cargarProductos();
+        }
+    }
+
+    async function editarProducto(id, nombre, precio, disponible) {
+        const nuevoNombre = prompt("Nombre:", nombre);
+        if (!nuevoNombre) return;
+        const nuevoPrecio = parseFloat(prompt("Precio:", precio));
+        if (isNaN(nuevoPrecio)) return;
+        const nuevaDisp = confirm("¿Está disponible?");
+        await fetch(`${API}/productos/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nombre: nuevoNombre, precio: nuevoPrecio, disponible: nuevaDisp })
+        });
+        cargarProductos();
+    }
+</script>
+
+</body>
+</html>
