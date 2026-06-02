@@ -1,15 +1,18 @@
 from fastapi import FastAPI, HTTPException, Depends
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 
 from Backend import models
 from Backend.database import engine, SessionLocal
 from Backend.schemas import ProductoSchema, PedidoCreateSchema
+from Backend.auth_schemas import RegistroSchema, LoginSchema, RecuperarSchema, ResetPasswordSchema
 
 from Backend.repository.producto_repo import SQLAlchemyProductoAdapter
 from Backend.services.producto_service import ProductoServiceImpl
 from Backend.services.decorators import ValidacionDecorator, LoggingDecorator, AuditoriaDecorator
 from Backend.services.pedido_service import PedidoService
+from Backend.services.auth_service import AuthService
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -22,6 +25,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.mount("/Frontend", StaticFiles(directory="Frontend", html=True), name="frontend")
+
 
 def get_db():
     db = SessionLocal()
@@ -29,6 +34,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
 
 def get_producto_service(db: Session = Depends(get_db)):
     repo     = SQLAlchemyProductoAdapter(db)
@@ -43,10 +49,68 @@ def get_pedido_service(db: Session = Depends(get_db)):
     return PedidoService(db)
 
 
+def get_auth_service():
+    return AuthService()
+
+
+# ── Base ───────────────────────────────────────────────────────────────────────
+
 @app.get("/")
 def home():
     return {"mensaje": "API Vulcaria — Refactorización con patrones de diseño"}
 
+
+# ── Auth ───────────────────────────────────────────────────────────────────────
+
+@app.post("/auth/registro")
+def registro(
+    datos: RegistroSchema,
+    db: Session = Depends(get_db),
+    auth: AuthService = Depends(get_auth_service)
+):
+    try:
+        return auth.registrar(db, datos.nombre, datos.email, datos.password)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/auth/login")
+def login(
+    datos: LoginSchema,
+    db: Session = Depends(get_db),
+    auth: AuthService = Depends(get_auth_service)
+):
+    try:
+        return auth.login(db, datos.email, datos.password)
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail=str(e))
+
+
+@app.post("/auth/recuperar-password")
+async def recuperar_password(
+    datos: RecuperarSchema,
+    db: Session = Depends(get_db),
+    auth: AuthService = Depends(get_auth_service)
+):
+    try:
+        return await auth.solicitar_recuperacion(db, datos.email)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/auth/reset-password")
+def reset_password(
+    datos: ResetPasswordSchema,
+    db: Session = Depends(get_db),
+    auth: AuthService = Depends(get_auth_service)
+):
+    try:
+        return auth.resetear_password(db, datos.token, datos.nueva_password)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+# ── Productos ──────────────────────────────────────────────────────────────────
 
 @app.get("/productos")
 def obtener_productos(
@@ -97,6 +161,8 @@ def eliminar_producto(id: int, servicio=Depends(get_producto_service)):
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     return {"mensaje": "Producto eliminado"}
 
+
+# ── Pedidos ────────────────────────────────────────────────────────────────────
 
 @app.get("/pedidos")
 def obtener_pedidos(servicio: PedidoService = Depends(get_pedido_service)):
