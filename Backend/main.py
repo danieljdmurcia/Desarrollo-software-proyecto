@@ -31,6 +31,10 @@ def home(request: Request):
 def sobre_nosotros(request: Request):
     return templates.TemplateResponse(request, "sobrenosotros.html")
 
+@app.get("/servicios")
+def servicios(request: Request):
+    return templates.TemplateResponse(request, "servicios.html")
+
 # ── API (datos JSON) ──
 @app.get("/api/productos")
 def obtener_productos(orden: str = None, db: Session = Depends(get_db)):
