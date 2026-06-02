@@ -6,6 +6,7 @@
     <title>Vulcaria</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="cart.css">
 </head>
 
 <body>
@@ -16,14 +17,22 @@
             <a href="#">Inicio</a>
             <a href="#">Contacto</a>
             <a href="#">Información</a>
+            <button class="btn-cart" id="cart-btn" onclick="openCart()">
+                Carrito
+                <span class="cart-count" id="cart-count" style="display:none">0</span>
+            </button>
             <div id="auth-header"></div>
         </nav>
     </header>
 
     <div class="carousel">
         <div class="list">
-            <div class="item">
-                <img src="../images/anillo1-removebg-preview.png" alt="Anillo">
+
+            <div class="item"
+                data-nombre="Anillo de compromiso clásico"
+                data-precio="1200000"
+                data-imagen="/images/anillo1-removebg-preview.png">
+                <img src="/images/anillo1-removebg-preview.png" alt="Anillo">
                 <div class="intro">
                     <div class="title">Anillo de compromiso</div>
                     <div class="topic">Elegancia y brillo eterno.</div>
@@ -40,14 +49,17 @@
                         <div><p>Acabado</p><p>Brillante</p></div>
                     </div>
                     <div class="checkout">
-                        <button>Añadir al carrito</button>
-                        <button>Comprar</button>
+                        <button onclick="addToCartFromItem(this)">Añadir al carrito</button>
+                        <button onclick="addToCartFromItem(this); openCart()">Comprar</button>
                     </div>
                 </div>
             </div>
 
-            <div class="item">
-                <img src="../images/anillo2-removebg-preview.png" alt="Anillo">
+            <div class="item"
+                data-nombre="Anillo de compromiso moderno"
+                data-precio="980000"
+                data-imagen="/images/anillo2-removebg-preview.png">
+                <img src="/images/anillo2-removebg-preview.png" alt="Anillo">
                 <div class="intro">
                     <div class="title">Anillo de compromiso</div>
                     <div class="topic">Brillo clásico y elegante.</div>
@@ -64,14 +76,17 @@
                         <div><p>Acabado</p><p>Pulido</p></div>
                     </div>
                     <div class="checkout">
-                        <button>Añadir al carrito</button>
-                        <button>Comprar</button>
+                        <button onclick="addToCartFromItem(this)">Añadir al carrito</button>
+                        <button onclick="addToCartFromItem(this); openCart()">Comprar</button>
                     </div>
                 </div>
             </div>
 
-            <div class="item">
-                <img src="../images/anillo3-removebg-preview.png" alt="Anillo">
+            <div class="item"
+                data-nombre="Anillo de compromiso elegante"
+                data-precio="1450000"
+                data-imagen="/images/anillo3-removebg-preview.png">
+                <img src="/images/anillo3-removebg-preview.png" alt="Anillo">
                 <div class="intro">
                     <div class="title">Anillo de compromiso</div>
                     <div class="topic">Diseño delicado y brillante.</div>
@@ -88,14 +103,17 @@
                         <div><p>Acabado</p><p>Brillante</p></div>
                     </div>
                     <div class="checkout">
-                        <button>Añadir al carrito</button>
-                        <button>Comprar</button>
+                        <button onclick="addToCartFromItem(this)">Añadir al carrito</button>
+                        <button onclick="addToCartFromItem(this); openCart()">Comprar</button>
                     </div>
                 </div>
             </div>
 
-            <div class="item">
-                <img src="../images/anillo4-removebg-preview.png" alt="Anillo">
+            <div class="item"
+                data-nombre="Anillo de compromiso minimalista"
+                data-precio="850000"
+                data-imagen="/images/anillo4-removebg-preview.png">
+                <img src="/images/anillo4-removebg-preview.png" alt="Anillo">
                 <div class="intro">
                     <div class="title">Anillo de compromiso</div>
                     <div class="topic">Sutil y sofisticado.</div>
@@ -112,14 +130,17 @@
                         <div><p>Acabado</p><p>Pulido</p></div>
                     </div>
                     <div class="checkout">
-                        <button>Añadir al carrito</button>
-                        <button>Comprar</button>
+                        <button onclick="addToCartFromItem(this)">Añadir al carrito</button>
+                        <button onclick="addToCartFromItem(this); openCart()">Comprar</button>
                     </div>
                 </div>
             </div>
 
-            <div class="item">
-                <img src="../images/aretes1-removebg-preview.png" alt="Aretes">
+            <div class="item"
+                data-nombre="Aretes de esmeralda"
+                data-precio="760000"
+                data-imagen="/images/aretes1-removebg-preview.png">
+                <img src="/images/aretes1-removebg-preview.png" alt="Aretes">
                 <div class="intro">
                     <div class="title">Aretes de esmeralda</div>
                     <div class="topic">Brillo sutil y sofisticado.</div>
@@ -136,11 +157,12 @@
                         <div><p>Acabado</p><p>Brillante</p></div>
                     </div>
                     <div class="checkout">
-                        <button>Añadir al carrito</button>
-                        <button>Comprar</button>
+                        <button onclick="addToCartFromItem(this)">Añadir al carrito</button>
+                        <button onclick="addToCartFromItem(this); openCart()">Comprar</button>
                     </div>
                 </div>
             </div>
+
         </div>
 
         <div class="arrows">
@@ -151,21 +173,21 @@
     </div>
 
     <section class="colecciones">
-        <img class="coleccion-img" src="../images/imgColecc/colección1.jpg" alt="Colección 1">
+        <img class="coleccion-img" src="/images/imgColecc/colección1.jpg" alt="Colección 1">
         <div class="coleccion-content container">
             <h2>Nuestras colecciones</h2>
             <p class="txt-p">Descubre la elegancia atemporal de nuestra joyería y encuentra piezas únicas para cada ocasión.</p>
             <div class="colecciones-group">
                 <div class="coleccion-1">
-                    <img src="../images/imgColecc/colección1.jpg" alt="Colección Clásica">
+                    <img src="/images/imgColecc/colección1.jpg" alt="Colección Clásica">
                     <div class="coleccion-info"><h3>Colección Clásica</h3><p>Joyas que combinan tradición, delicadeza y elegancia.</p></div>
                 </div>
                 <div class="coleccion-2">
-                    <img src="../images/imgColecc/colección2.jpg" alt="Colección Moderna">
+                    <img src="/images/imgColecc/colección2.jpg" alt="Colección Moderna">
                     <div class="coleccion-info"><h3>Colección Moderna</h3><p>Diseños contemporáneos con un toque de lujo y estilo.</p></div>
                 </div>
                 <div class="coleccion-3">
-                    <img src="../images/imgColecc/colección3.jpg" alt="Colección Exclusiva">
+                    <img src="/images/imgColecc/colección3.jpg" alt="Colección Exclusiva">
                     <div class="coleccion-info"><h3>Colección Exclusiva</h3><p>Piezas pensadas para resaltar tu esencia en momentos únicos.</p></div>
                 </div>
             </div>
@@ -178,15 +200,15 @@
             <h2>Servicios</h2>
             <div class="services-group">
                 <div class="service-1">
-                    <img src="../images/servicios/servicio1.jpg" alt="Personalización">
+                    <img src="/images/servicios/servicio1.jpg" alt="Personalización">
                     <div class="service-info"><h3>Personalización</h3></div>
                 </div>
                 <div class="service-2">
-                    <img src="../images/servicios/servicio2.jpg" alt="Reparación">
+                    <img src="/images/servicios/servicio2.jpg" alt="Reparación">
                     <div class="service-info"><h3>Reparación</h3></div>
                 </div>
                 <div class="service-3">
-                    <img src="../images/servicios/servicio3.jpg" alt="Asesoría">
+                    <img src="/images/servicios/servicio3.jpg" alt="Asesoría">
                     <div class="service-info"><h3>Asesoría</h3></div>
                 </div>
             </div>
@@ -218,17 +240,17 @@
         <p>Descubre consejos, tendencias e ideas para elegir y cuidar tus joyas favoritas.</p>
         <div class="blog-content">
             <div class="blog-1">
-                <img src="../images/blog/blog1.jpg" alt="Cuidado de joyas">
+                <img src="/images/blog/blog1.jpg" alt="Cuidado de joyas">
                 <h3>Cuida tus joyas</h3>
                 <p>Aprende cómo mantener el brillo y la elegancia de tus piezas con cuidados simples y efectivos.</p>
             </div>
             <div class="blog-1">
-                <img src="../images/blog/blog2.jpg" alt="Tendencias en joyería">
+                <img src="/images/blog/blog2.jpg" alt="Tendencias en joyería">
                 <h3>Tendencias 2026</h3>
                 <p>Conoce los estilos, acabados y diseños que están marcando la joyería de esta temporada.</p>
             </div>
             <div class="blog-1">
-                <img src="../images/blog/blog3.jpg" alt="Anillo ideal">
+                <img src="/images/blog/blog3.jpg" alt="Anillo ideal">
                 <h3>El anillo ideal</h3>
                 <p>Encuentra la pieza perfecta para un momento especial con una guía práctica y elegante.</p>
             </div>
@@ -277,18 +299,36 @@
         </div>
     </footer>
 
+    <!-- Panel carrito -->
+    <div class="cart-overlay" onclick="closeCart()"></div>
+    <div class="cart-panel">
+        <div class="cart-header">
+            <h3>Tu carrito</h3>
+            <button class="cart-close" onclick="closeCart()">✕</button>
+        </div>
+        <div class="cart-items" id="cart-items"></div>
+        <div class="cart-footer">
+            <div id="cart-msg" class="cart-msg"></div>
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="cart-total">$0.00</span>
+            </div>
+            <button class="cart-confirm" id="cart-confirm" onclick="confirmarPedido()" disabled>
+                Confirmar pedido
+            </button>
+            <button class="cart-clear" onclick="clearCart()">Vaciar carrito</button>
+        </div>
+    </div>
+
     <!-- Modal Auth -->
     <div class="auth-overlay">
         <div class="auth-modal">
             <button class="auth-close" onclick="cerrarModal()">✕</button>
             <h2>Vulcaria</h2>
-
             <div class="auth-tabs">
                 <button class="auth-tab active" data-tab="login" onclick="switchTab('login')">Iniciar sesión</button>
                 <button class="auth-tab" data-tab="registro" onclick="switchTab('registro')">Registrarse</button>
             </div>
-
-            <!-- Login -->
             <form id="form-login" class="auth-form active" onsubmit="login(event)">
                 <label>Email</label>
                 <input type="email" id="login-email" placeholder="tu@email.com" required>
@@ -298,8 +338,6 @@
                 <button type="submit" class="auth-btn">Ingresar</button>
                 <div id="msg-login" class="auth-msg"></div>
             </form>
-
-            <!-- Registro -->
             <form id="form-registro" class="auth-form" onsubmit="registro(event)">
                 <label>Nombre</label>
                 <input type="text" id="reg-nombre" placeholder="Tu nombre completo" required>
@@ -310,8 +348,6 @@
                 <button type="submit" class="auth-btn">Crear cuenta</button>
                 <div id="msg-registro" class="auth-msg"></div>
             </form>
-
-            <!-- Recuperar -->
             <form id="form-recuperar" class="auth-form" onsubmit="recuperarPassword(event)">
                 <label>Email de tu cuenta</label>
                 <input type="email" id="rec-email" placeholder="tu@email.com" required>
@@ -319,8 +355,6 @@
                 <button type="button" class="auth-link" onclick="switchTab('login')">← Volver al login</button>
                 <div id="msg-recuperar" class="auth-msg"></div>
             </form>
-
-            <!-- Reset -->
             <form id="form-reset" class="auth-form" onsubmit="resetPassword(event)">
                 <label>Nueva contraseña</label>
                 <input type="password" id="reset-password" placeholder="Mínimo 8 caracteres" required>
@@ -332,6 +366,25 @@
 
     <script src="app.js"></script>
     <script src="auth.js"></script>
+    <script src="cart.js"></script>
+    <script>
+        // Helper: lee datos del .item padre y agrega al carrito
+        function addToCartFromItem(btn) {
+            const item = btn.closest('.item');
+            if (!item) return;
+            const nombre    = item.dataset.nombre;
+            const precio    = parseFloat(item.dataset.precio);
+            const imagen    = item.dataset.imagen;
+            // Busca en la API primero, si no usa los datos del HTML
+            const productos = window._productosAPI || {};
+            const match     = Object.values(productos).find(p => p.nombre === nombre);
+            if (match) {
+                addToCart(match.id, match.nombre, match.precio, match.imagen_url || imagen);
+            } else {
+                addToCart(nombre, nombre, precio, imagen);
+            }
+        }
+    </script>
 
 </body>
 </html>

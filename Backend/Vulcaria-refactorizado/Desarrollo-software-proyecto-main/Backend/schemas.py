@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 import datetime
 
 
@@ -6,6 +7,7 @@ class ProductoSchema(BaseModel):
     nombre: str
     precio: float
     disponible: bool
+    imagen_url: Optional[str] = None
 
 
 class PedidoCreateSchema(BaseModel):

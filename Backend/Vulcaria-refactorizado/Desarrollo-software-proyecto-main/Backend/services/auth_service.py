@@ -40,7 +40,11 @@ class AuthService:
         token = secrets.token_urlsafe(32)
         expira = datetime.now(timezone.utc) + timedelta(hours=1)
         usuario_repo.guardar_reset_token(db, usuario, token, expira)
-        await enviar_email_recuperacion(usuario.email, usuario.nombre, token)
+        try:
+            await enviar_email_recuperacion(usuario.email, usuario.nombre, token)
+        except Exception as e:
+            print(f"ERROR EMAIL: {e}")
+            raise
         return {"mensaje": "Si el email existe, recibirás un enlace de recuperación"}
 
     def resetear_password(self, db: Session, token: str, nueva_password: str):

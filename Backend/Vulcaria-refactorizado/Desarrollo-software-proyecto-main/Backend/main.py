@@ -26,6 +26,7 @@ app.add_middleware(
 )
 
 app.mount("/Frontend", StaticFiles(directory="Frontend", html=True), name="frontend")
+app.mount("/images", StaticFiles(directory="images"), name="images")
 
 
 def get_db():

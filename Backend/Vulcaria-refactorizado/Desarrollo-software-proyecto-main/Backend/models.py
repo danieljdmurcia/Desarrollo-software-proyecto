@@ -10,6 +10,7 @@ class Producto(Base):
     nombre     = Column(String(100))
     precio     = Column(Float)
     disponible = Column(Boolean, default=True)
+    imagen_url = Column(String(255), nullable=True)
     pedidos    = relationship("Pedido", back_populates="producto")
 
 
