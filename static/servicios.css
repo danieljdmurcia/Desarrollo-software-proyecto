@@ -1,0 +1,137 @@
+/* ── HERO ── */
+.srv-hero {
+    background-color: var(--bg);
+    text-align: center;
+    padding: 80px 40px 60px;
+}
+
+.srv-hero h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 50px;
+}
+
+.srv-hero-img {
+    width: 400px;
+    height: 600px;
+    margin: 0 auto;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.srv-hero-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.srv-hero p {
+    font-size: 1.1rem;
+    color: var(--text-soft);
+    max-width: 700px;
+    margin: 50px auto 0;
+    line-height: 1.8;
+}
+
+/* ── GRID 3 SERVICIOS ── */
+.srv-section {
+    padding: 80px 40px;
+    background-color: var(--bg);
+}
+
+.srv-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.srv-card {
+    background-color: rgba(88,79,80,0.45);
+    border: 1px solid rgba(234,232,235,0.12);
+    border-radius: 20px;
+    overflow: hidden;
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.srv-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.srv-card img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    display: block;
+}
+
+.srv-card-text {
+    padding: 25px;
+}
+
+.srv-card-text h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 12px;
+}
+
+.srv-card-text p {
+    color: var(--text-soft);
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
+/* ── CTA ── */
+.srv-cta {
+    text-align: center;
+    padding: 100px 20px;
+    background-color: var(--surface);
+}
+
+.srv-cta h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 20px;
+}
+
+.srv-cta p {
+    color: var(--text-soft);
+    font-size: 1.1rem;
+    margin-bottom: 40px;
+}
+
+.btn-consulta {
+    display: inline-block;
+    padding: 16px 48px;
+    background-color: var(--accent);
+    color: var(--text);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-consulta:hover {
+    background-color: #4a5268;
+    transform: translateY(-2px);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+    .srv-grid { grid-template-columns: 1fr; }
+    .srv-hero h1 { font-size: 2.2rem; }
+    .srv-hero-img { width: 100%; height: 450px; }
+}
