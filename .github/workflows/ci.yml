@@ -1,4 +1,5 @@
 name: CI - Pruebas Automatizadas
+
 on:
   push:
     branches: [ main ]
@@ -10,6 +11,15 @@ jobs:
     steps:
       - name: Clonar repositorio
         uses: actions/checkout@v3
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v3
+
       - name: Configurar Python
         uses: actions/setup-python@v4
         with:
@@ -17,6 +27,14 @@ jobs:
       - name: Instalar dependencias
         run: |
           pip install fastapi uvicorn jinja2 python-multipart sqlalchemy pytest httpx
+      - name: Correr pruebas
+        run: |
+          pytest tests/ -v
+
+      - name: Instalar dependencias
+        run: |
+          pip install fastapi uvicorn jinja2 python-multipart sqlalchemy pytest httpx
+
       - name: Correr pruebas
         run: |
           pytest tests/ -v
