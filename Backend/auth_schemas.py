@@ -18,6 +18,7 @@ class TokenSchema(BaseModel):
     token_type: str = "bearer"
     nombre: str
     email: str
+    es_admin: bool = False          # ← nuevo: indica si el usuario es admin @vulcaria
 
 
 class RecuperarSchema(BaseModel):

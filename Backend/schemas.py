@@ -3,7 +3,9 @@ from pydantic import BaseModel
 class ProductoSchema(BaseModel):
     nombre: str
     precio: float
-    disponible: bool
+    disponible: bool = True
+    imagen_url: str = None   # NUEVO
+    categoria: str = "general"  # NUEVO
 
 class CitaSchema(BaseModel):
     nombre: str
