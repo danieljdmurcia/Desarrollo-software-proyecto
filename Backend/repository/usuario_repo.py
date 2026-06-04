@@ -15,8 +15,15 @@ def obtener_por_reset_token(db: Session, token: str) -> Usuario | None:
     return db.query(Usuario).filter(Usuario.reset_token == token).first()
 
 
-def crear_usuario(db: Session, nombre: str, usuario: str, email: str, password_hash: str):
-    nuevo = Usuario(nombre=nombre, usuario=usuario, email=email, password_hash=password_hash)
+def crear_usuario(db: Session, nombre: str, usuario: str, email: str, password_hash: str, es_admin: bool = False):
+    # ← añadido es_admin con default False para no romper llamadas existentes
+    nuevo = Usuario(
+        nombre=nombre,
+        usuario=usuario,
+        email=email,
+        password_hash=password_hash,
+        es_admin=es_admin
+    )
     db.add(nuevo)
     db.commit()
     db.refresh(nuevo)
