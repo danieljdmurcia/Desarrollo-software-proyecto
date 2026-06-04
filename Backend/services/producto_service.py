@@ -17,11 +17,15 @@ def obtener_todos(db: Session, orden: str = None):
 def obtener_por_id(db: Session, id: int):
     return producto_repo.obtener_por_id(db, id)
 
+def obtener_por_categoria(db: Session, categoria: str):  # NUEVO
+    return producto_repo.obtener_por_categoria(db, categoria)
+
 def crear_producto(db: Session, producto: ProductoSchema):
     return producto_repo.crear(db, producto.dict())
 
 def actualizar_producto(db: Session, id: int, producto: ProductoSchema):
     return producto_repo.actualizar(db, id, producto.dict())
 
-def eliminar_producto(db: Session, id: int):
-    return producto_repo.eliminar(db, id)
+def suspender_producto(db: Session, id: int):  # NUEVO — reemplaza eliminar_producto
+    """Suspende un producto sin eliminarlo de la BD."""
+    return producto_repo.suspender(db, id)

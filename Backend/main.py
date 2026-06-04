@@ -68,12 +68,13 @@ def actualizar_producto(id: int, producto: ProductoSchema, db: Session = Depends
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     return item
 
-@app.delete("/api/productos/{id}")
-def eliminar_producto(id: int, db: Session = Depends(get_db)):
-    item = producto_service.eliminar_producto(db, id)
+# ── Suspender producto (reemplaza eliminar — nunca borra de la BD) ──
+@app.patch("/api/productos/{id}/suspender")
+def suspender_producto(id: int, db: Session = Depends(get_db)):
+    item = producto_service.suspender_producto(db, id)
     if not item:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
-    return {"mensaje": "Producto eliminado"}
+    return {"mensaje": "Producto suspendido"}
 
 # ── VISTAS CITAS ──
 @app.get("/citas")
