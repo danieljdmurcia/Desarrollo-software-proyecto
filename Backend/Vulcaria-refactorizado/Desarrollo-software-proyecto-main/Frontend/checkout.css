@@ -1,0 +1,327 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #1c1015;
+    color: #f9f9f9;
+    min-height: 100vh;
+}
+
+/* ── Header ────────────────────────────────────────────── */
+.checkout-header {
+    width: 1140px;
+    max-width: 90%;
+    margin: auto;
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    border-bottom: 1px solid #584f50;
+    margin-bottom: 50px;
+}
+
+.checkout-header .logo {
+    font-weight: 700;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    color: #f9f9f9;
+    text-decoration: none;
+}
+
+.checkout-header a {
+    color: #eae8eb;
+    font-size: .85rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color .3s;
+}
+.checkout-header a:hover { color: #f9f9f9; }
+
+/* ── Layout ────────────────────────────────────────────── */
+.checkout-container {
+    width: 1140px;
+    max-width: 90%;
+    margin: 0 auto 80px;
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 40px;
+}
+
+h1.checkout-title {
+    font-size: 2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 30px;
+    grid-column: 1 / -1;
+}
+
+/* ── Sección ────────────────────────────────────────────── */
+.checkout-section {
+    background: #584f50;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 24px;
+}
+
+.checkout-section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    color: #f9f9f9;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(234,232,235,0.2);
+}
+
+/* ── Productos ──────────────────────────────────────────── */
+.checkout-item {
+    display: flex;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(234,232,235,0.1);
+    align-items: center;
+}
+.checkout-item:last-child { border-bottom: none; }
+
+.checkout-item img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 10px;
+    background: #1c1015;
+    flex-shrink: 0;
+}
+
+.checkout-item-info { flex: 1; }
+.checkout-item-info h4 {
+    font-size: .9rem;
+    font-weight: 600;
+    color: #f9f9f9;
+    margin-bottom: 4px;
+}
+.checkout-item-info p {
+    font-size: .8rem;
+    color: #eae8eb;
+}
+
+.checkout-item-price {
+    font-size: .95rem;
+    font-weight: 600;
+    color: #f9f9f9;
+    white-space: nowrap;
+}
+
+/* ── Métodos de pago ────────────────────────────────────── */
+.metodos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.metodo-btn {
+    background: rgba(28,16,21,0.5);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all .25s;
+    font-family: 'Poppins', sans-serif;
+    color: #eae8eb;
+    font-size: .85rem;
+    font-weight: 500;
+    text-align: left;
+}
+.metodo-btn:hover { border-color: #636c83; background: rgba(99,108,131,0.15); }
+.metodo-btn.active { border-color: #636c83; background: rgba(99,108,131,0.25); color: #f9f9f9; }
+
+.metodo-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+/* ── Formulario ─────────────────────────────────────────── */
+.form-pago { display: none; }
+.form-pago.active { display: block; }
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.form-row.full { grid-template-columns: 1fr; }
+
+.form-group label {
+    display: block;
+    font-size: .8rem;
+    color: #eae8eb;
+    margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 11px 16px;
+    background: rgba(28,16,21,0.6);
+    border: 1px solid #584f50;
+    border-radius: 30px;
+    color: #f9f9f9;
+    font-family: 'Poppins', sans-serif;
+    font-size: .85rem;
+    outline: none;
+    transition: border-color .2s;
+}
+.form-group input:focus,
+.form-group select:focus { border-color: #636c83; }
+.form-group input::placeholder { color: #888; }
+.form-group select option { background: #1c1015; }
+
+/* ── Resumen ────────────────────────────────────────────── */
+.resumen-panel {
+    position: sticky;
+    top: 24px;
+}
+
+.resumen-section {
+    background: #584f50;
+    border-radius: 20px;
+    padding: 28px;
+}
+
+.resumen-section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(234,232,235,0.2);
+}
+
+.resumen-linea {
+    display: flex;
+    justify-content: space-between;
+    font-size: .85rem;
+    color: #eae8eb;
+    margin-bottom: 10px;
+}
+
+.resumen-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f9f9f9;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(234,232,235,0.2);
+}
+
+.btn-pagar {
+    width: 100%;
+    padding: 14px;
+    background: #636c83;
+    color: #f9f9f9;
+    border: none;
+    border-radius: 30px;
+    font-family: 'Poppins', sans-serif;
+    font-size: .95rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: .3s ease;
+}
+.btn-pagar:hover { background: #7a85a0; transform: translateY(-2px); }
+.btn-pagar:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+.seguro-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .75rem;
+    color: #888;
+    margin-top: 14px;
+    text-align: center;
+    justify-content: center;
+}
+
+/* ── Modal confirmación ─────────────────────────────────── */
+.confirm-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+.confirm-overlay.active { display: flex; }
+
+.confirm-modal {
+    background: #1c1015;
+    border: 1px solid #584f50;
+    border-radius: 20px;
+    padding: 3rem 2rem;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+}
+
+.confirm-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+
+.confirm-modal h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #f9f9f9;
+    margin-bottom: .8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.confirm-modal p {
+    color: #eae8eb;
+    font-size: .9rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+}
+
+.confirm-modal .btn-volver {
+    display: inline-block;
+    padding: 11px 35px;
+    background: #584f50;
+    color: #f9f9f9;
+    border: none;
+    border-radius: 30px;
+    font-family: 'Poppins', sans-serif;
+    font-size: .9rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: .3s ease;
+    text-decoration: none;
+}
+.confirm-modal .btn-volver:hover { background: #636c83; transform: translateY(-2px); }
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .checkout-container {
+        grid-template-columns: 1fr;
+    }
+    .resumen-panel { position: static; }
+    .metodos-grid { grid-template-columns: 1fr; }
+    h1.checkout-title { font-size: 1.5rem; }
+}

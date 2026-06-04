@@ -33,7 +33,7 @@ function switchTab(tab) {
 
 function limpiarMensajes() {
     document.querySelectorAll('.auth-msg').forEach(m => {
-        m.className = 'auth-msg';
+        m.className   = 'auth-msg';
         m.textContent = '';
     });
 }
@@ -42,7 +42,7 @@ function mostrarMsg(id, texto, tipo) {
     const el = document.getElementById(id);
     if (!el) return;
     el.textContent = texto;
-    el.className = `auth-msg ${tipo}`;
+    el.className   = `auth-msg ${tipo}`;
 }
 
 function actualizarHeader() {
@@ -73,9 +73,9 @@ async function registro(e) {
     const password = document.getElementById('reg-password').value;
     try {
         const res  = await fetch(`${API_URL}/auth/registro`, {
-            method: 'POST',
+            method:  'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nombre, email, password })
+            body:    JSON.stringify({ nombre, email, password })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail || 'Error al registrarse');
@@ -87,34 +87,82 @@ async function registro(e) {
     }
 }
 
+// ── Login con bloqueo por intentos ─────────────────────────────────────────────
+
+let intervaloBloqueo = null;
+
 async function login(e) {
     e.preventDefault();
     const email    = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
+
     try {
         const res  = await fetch(`${API_URL}/auth/login`, {
-            method: 'POST',
+            method:  'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
+            body:    JSON.stringify({ email, password })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail || 'Credenciales incorrectas');
+
+        // Login exitoso
+        if (intervaloBloqueo) {
+            clearInterval(intervaloBloqueo);
+            intervaloBloqueo = null;
+        }
         saveSession(data);
         actualizarHeader();
         cerrarModal();
+
     } catch (err) {
-        mostrarMsg('msg-login', err.message, 'error');
+        const msg = err.message || '';
+        mostrarMsg('msg-login', msg, 'error');
+
+        // Iniciar cuenta regresiva si la cuenta está bloqueada
+        if (msg.toLowerCase().includes('bloqueada')) {
+            iniciarCuentaRegresiva();
+        }
     }
 }
+
+function iniciarCuentaRegresiva() {
+    const btnLogin = document.querySelector('#form-login .auth-btn');
+    const msgEl    = document.getElementById('msg-login');
+    if (!btnLogin || !msgEl) return;
+
+    // Limpiar intervalo anterior si existía
+    if (intervaloBloqueo) clearInterval(intervaloBloqueo);
+
+    btnLogin.disabled = true;
+    let total = 5 * 60; // 5 minutos en segundos
+
+    intervaloBloqueo = setInterval(() => {
+        total--;
+        const m    = Math.floor(total / 60);
+        const s    = (total % 60).toString().padStart(2, '0');
+        msgEl.textContent = `Cuenta bloqueada. Intenta de nuevo en ${m}:${s}`;
+        msgEl.className   = 'auth-msg error';
+
+        if (total <= 0) {
+            clearInterval(intervaloBloqueo);
+            intervaloBloqueo  = null;
+            btnLogin.disabled = false;
+            msgEl.className   = 'auth-msg';
+            msgEl.textContent = '';
+        }
+    }, 1000);
+}
+
+// ── Recuperar contraseña ───────────────────────────────────────────────────────
 
 async function recuperarPassword(e) {
     e.preventDefault();
     const email = document.getElementById('rec-email').value;
     try {
         const res  = await fetch(`${API_URL}/auth/recuperar-password`, {
-            method: 'POST',
+            method:  'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email })
+            body:    JSON.stringify({ email })
         });
         const data = await res.json();
         mostrarMsg('msg-recuperar', data.mensaje, 'success');
@@ -123,24 +171,28 @@ async function recuperarPassword(e) {
     }
 }
 
+// ── Reset contraseña ───────────────────────────────────────────────────────────
+
 async function resetPassword(e) {
     e.preventDefault();
     const token    = new URLSearchParams(window.location.search).get('token');
     const password = document.getElementById('reset-password').value;
     try {
         const res  = await fetch(`${API_URL}/auth/reset-password`, {
-            method: 'POST',
+            method:  'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token, nueva_password: password })
+            body:    JSON.stringify({ token, nueva_password: password })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail || 'Error al restablecer');
         mostrarMsg('msg-reset', data.mensaje, 'success');
-        setTimeout(() => window.location.href = '/', 2000);
+        setTimeout(() => window.location.href = '/Frontend/index.html', 2000);
     } catch (err) {
         mostrarMsg('msg-reset', err.message, 'error');
     }
 }
+
+// ── Init ───────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
     actualizarHeader();

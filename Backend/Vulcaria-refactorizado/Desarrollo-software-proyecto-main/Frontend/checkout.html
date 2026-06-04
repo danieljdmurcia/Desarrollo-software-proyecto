@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout — Vulcaria</title>
+    <link rel="stylesheet" href="checkout.css">
+</head>
+
+<body>
+
+    <header class="checkout-header">
+        <a href="/Frontend/index.html" class="logo">Vulcaria</a>
+        <a href="/Frontend/index.html">← Volver a la tienda</a>
+    </header>
+
+    <div class="checkout-container">
+
+        <h1 class="checkout-title">Finalizar compra</h1>
+
+        <!-- Columna izquierda -->
+        <div class="checkout-left">
+
+            <!-- Productos -->
+            <div class="checkout-section">
+                <h3>Tu pedido</h3>
+                <div id="checkout-items"></div>
+            </div>
+
+            <!-- Información personal -->
+            <div class="checkout-section">
+                <h3>Información de contacto</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nombre completo</label>
+                        <input type="text" id="nombre-usuario" placeholder="Tu nombre" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="tel" placeholder="300 000 0000">
+                    </div>
+                </div>
+                <div class="form-row full">
+                    <div class="form-group">
+                        <label>Dirección de entrega</label>
+                        <input type="text" placeholder="Calle, número, barrio, ciudad">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Métodos de pago -->
+            <div class="checkout-section">
+                <h3>Método de pago</h3>
+
+                <div class="metodos-grid">
+                    <button class="metodo-btn" data-metodo="tarjeta" onclick="seleccionarMetodo('tarjeta')">
+                        <span class="metodo-icon">💳</span>
+                        <div>
+                            <div style="font-weight:600">Tarjeta</div>
+                            <div style="font-size:.75rem;color:#aaa">Débito o crédito</div>
+                        </div>
+                    </button>
+                    <button class="metodo-btn" data-metodo="pse" onclick="seleccionarMetodo('pse')">
+                        <span class="metodo-icon">🏦</span>
+                        <div>
+                            <div style="font-weight:600">PSE</div>
+                            <div style="font-size:.75rem;color:#aaa">Débito bancario</div>
+                        </div>
+                    </button>
+                    <button class="metodo-btn" data-metodo="nequi" onclick="seleccionarMetodo('nequi')">
+                        <span class="metodo-icon">📱</span>
+                        <div>
+                            <div style="font-weight:600">Nequi</div>
+                            <div style="font-size:.75rem;color:#aaa">Pago móvil</div>
+                        </div>
+                    </button>
+                    <button class="metodo-btn" data-metodo="daviplata" onclick="seleccionarMetodo('daviplata')">
+                        <span class="metodo-icon">🔴</span>
+                        <div>
+                            <div style="font-weight:600">Daviplata</div>
+                            <div style="font-size:.75rem;color:#aaa">Pago móvil</div>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Formulario tarjeta -->
+                <div class="form-pago" id="form-tarjeta">
+                    <div class="form-row full">
+                        <div class="form-group">
+                            <label>Número de tarjeta</label>
+                            <input type="text" placeholder="0000 0000 0000 0000" maxlength="19"
+                                oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/(.{4})/g,'$1 ').trim()">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Titular de la tarjeta</label>
+                            <input type="text" placeholder="Nombre como aparece en la tarjeta">
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo</label>
+                            <select>
+                                <option>Crédito</option>
+                                <option>Débito</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Fecha de vencimiento</label>
+                            <input type="text" placeholder="MM/AA" maxlength="5"
+                                oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/^(.{2})/,'$1/')">
+                        </div>
+                        <div class="form-group">
+                            <label>CVV</label>
+                            <input type="password" placeholder="•••" maxlength="4">
+                        </div>
+                    </div>
+                    <div class="form-row full">
+                        <div class="form-group">
+                            <label>Cuotas</label>
+                            <select>
+                                <option>1 cuota (sin intereses)</option>
+                                <option>3 cuotas</option>
+                                <option>6 cuotas</option>
+                                <option>12 cuotas</option>
+                                <option>24 cuotas</option>
+                                <option>36 cuotas</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulario PSE -->
+                <div class="form-pago" id="form-pse">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Banco</label>
+                            <select>
+                                <option>Bancolombia</option>
+                                <option>Banco de Bogotá</option>
+                                <option>Davivienda</option>
+                                <option>BBVA Colombia</option>
+                                <option>Banco Popular</option>
+                                <option>Scotiabank Colpatria</option>
+                                <option>AV Villas</option>
+                                <option>Banco Caja Social</option>
+                                <option>Banco Agrario</option>
+                                <option>Itaú Colombia</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo de persona</label>
+                            <select>
+                                <option>Natural</option>
+                                <option>Jurídica</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tipo de documento</label>
+                            <select>
+                                <option>Cédula de ciudadanía</option>
+                                <option>Cédula de extranjería</option>
+                                <option>NIT</option>
+                                <option>Pasaporte</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Número de documento</label>
+                            <input type="text" placeholder="0000000000">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulario Nequi -->
+                <div class="form-pago" id="form-nequi">
+                    <div class="form-row full">
+                        <div class="form-group">
+                            <label>Número de celular Nequi</label>
+                            <input type="tel" placeholder="300 000 0000" maxlength="10">
+                        </div>
+                    </div>
+                    <p style="font-size:.8rem;color:#aaa;margin-top:8px;">
+                        Recibirás una notificación en tu app Nequi para confirmar el pago.
+                    </p>
+                </div>
+
+                <!-- Formulario Daviplata -->
+                <div class="form-pago" id="form-daviplata">
+                    <div class="form-row full">
+                        <div class="form-group">
+                            <label>Número de celular Daviplata</label>
+                            <input type="tel" placeholder="300 000 0000" maxlength="10">
+                        </div>
+                    </div>
+                    <p style="font-size:.8rem;color:#aaa;margin-top:8px;">
+                        Recibirás una notificación en tu app Daviplata para confirmar el pago.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Columna derecha — Resumen -->
+        <div class="resumen-panel">
+            <div class="resumen-section">
+                <h3>Resumen del pedido</h3>
+                <div class="resumen-linea">
+                    <span id="resumen-items">0 productos</span>
+                </div>
+                <div class="resumen-linea">
+                    <span>Subtotal</span>
+                    <span id="resumen-subtotal">$0</span>
+                </div>
+                <div class="resumen-linea">
+                    <span>Envío</span>
+                    <span style="color:#7ecfa0">Gratis</span>
+                </div>
+                <div class="resumen-total">
+                    <span>Total</span>
+                    <span id="resumen-total">$0</span>
+                </div>
+
+                <button class="btn-pagar" id="btn-pagar" onclick="confirmarPago()" disabled>
+                    Confirmar pago
+                </button>
+
+                <div class="seguro-info">
+                    🔒 Pago 100% seguro y encriptado
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal confirmación -->
+    <div class="confirm-overlay" id="confirm-overlay">
+        <div class="confirm-modal">
+            <div class="confirm-icon">✅</div>
+            <h2>¡Pago exitoso!</h2>
+            <p>
+                Tu pedido ha sido confirmado.<br>
+                Pronto nos comunicamos contigo con los detalles de entrega.
+            </p>
+            <a href="/Frontend/index.html" class="btn-volver">Volver a la tienda</a>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://expert-spork-wrvpqg4prv7xfgxj6-8000.app.github.dev';
+    </script>
+    <script src="checkout.js"></script>
+
+</body>
+</html>
