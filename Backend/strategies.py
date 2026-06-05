@@ -1,32 +1,22 @@
 from abc import ABC, abstractmethod
-<<<<<<< HEAD
 from typing import Optional
 
-=======
->>>>>>> origin/main
 
 class OrdenStrategy(ABC):
     @abstractmethod
     def ordenar(self, productos: list) -> list:
         pass
 
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/main
 class OrdenarPorPrecio(OrdenStrategy):
     def ordenar(self, productos: list) -> list:
         return sorted(productos, key=lambda p: p.precio)
 
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/main
 class OrdenarPorNombre(OrdenStrategy):
     def ordenar(self, productos: list) -> list:
         return sorted(productos, key=lambda p: p.nombre)
 
-<<<<<<< HEAD
 
 class OrdenarPorDisponibilidad(OrdenStrategy):
     def ordenar(self, productos: list) -> list:
@@ -50,6 +40,7 @@ class OrdenStrategyFactory:
     def registrar(cls, tipo: str, estrategia: type) -> None:
         cls._estrategias[tipo] = estrategia
 
+
 class FiltroStrategy(ABC):
     @abstractmethod
     def filtrar(self, productos: list) -> list:
@@ -68,8 +59,3 @@ class FiltrarPorRangoPrecio(FiltroStrategy):
 
     def filtrar(self, productos: list) -> list:
         return [p for p in productos if self.minimo <= p.precio <= self.maximo]
-=======
-class OrdenarPorDisponibilidad(OrdenStrategy):
-    def ordenar(self, productos: list) -> list:
-        return sorted(productos, key=lambda p: not p.disponible)
->>>>>>> origin/main
