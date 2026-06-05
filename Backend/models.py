@@ -11,6 +11,8 @@ class Producto(Base):
     precio     = Column(Float)
     disponible = Column(Boolean, default=True)
     imagen_url = Column(String(255), nullable=True)
+    categoria  = Column(String(50), nullable=True, default="general")
+    unidades   = Column(Integer, nullable=False, default=0)   # ← nuevo: stock
     pedidos    = relationship("Pedido", back_populates="producto")
 
 class Cita(Base):
@@ -37,6 +39,7 @@ class Usuario(Base):
     usuario            = Column(String(100), unique=True, index=True, nullable=True)
     email              = Column(String(150), unique=True, index=True, nullable=False)
     password_hash      = Column(String(255), nullable=False)
+    es_admin           = Column(Boolean, default=False)        # ← nuevo: rol admin
     reset_token        = Column(String(255), nullable=True)
     reset_token_expira = Column(DateTime, nullable=True)
     created_at         = Column(DateTime, default=datetime.datetime.utcnow)

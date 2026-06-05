@@ -1,9 +1,13 @@
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from Backend.security import hashear_password, verificar_password, crear_token
 from Backend.repository import usuario_repo
 from Backend.email_service import enviar_email_recuperacion
 import secrets
+
+DOMINIO_ADMIN = "vulcaria"
+PRECIO_MINIMO = 200_000  # pesos colombianos
 
 
 class AuthService:
@@ -12,25 +16,58 @@ class AuthService:
         if usuario_repo.obtener_por_email(db, email):
             raise ValueError("Ya existe una cuenta con ese email")
         if len(password) < 8:
-                raise ValueError("La contraseña debe tener al menos 8 caracteres")
+            raise ValueError("La contraseña debe tener al menos 8 caracteres")
+
+        # Verificar si el nombre de usuario ya existe
+        if usuario_repo.obtener_por_usuario(db, usuario):
+            raise ValueError("Ese nombre de usuario ya está en uso")
+
+        # Detectar si el correo es @vulcaria → es admin
+        dominio = email.split("@")[-1].split(".")[0].lower()
+        es_admin = dominio == DOMINIO_ADMIN
+
         hash_pw = hashear_password(password)
-        nuevo = usuario_repo.crear_usuario(db, nombre, usuario, email, hash_pw)
-        token = crear_token({"sub": str(nuevo.id), "email": nuevo.email})
+        try:
+            nuevo = usuario_repo.crear_usuario(db, nombre, usuario, email, hash_pw, es_admin)
+        except IntegrityError:
+            db.rollback()
+            raise ValueError("El nombre de usuario o correo ya está registrado")
+
+        token = crear_token({
+            "sub": str(nuevo.id),
+            "email": nuevo.email,
+            "es_admin": nuevo.es_admin
+        })
         return {
             "access_token": token,
             "token_type": "bearer",
-            "usuario": {"id": nuevo.id, "nombre": nuevo.nombre, "usuario": nuevo.usuario, "email": nuevo.email}
-    }
+            "usuario": {
+                "id": nuevo.id,
+                "nombre": nuevo.nombre,
+                "usuario": nuevo.usuario,
+                "email": nuevo.email,
+                "es_admin": nuevo.es_admin
+            }
+        }
 
     def login(self, db: Session, email: str, password: str):
         usuario = usuario_repo.obtener_por_email(db, email)
         if not usuario or not verificar_password(password, usuario.password_hash):
             raise ValueError("Email o contraseña incorrectos")
-        token = crear_token({"sub": str(usuario.id), "email": usuario.email})
+        token = crear_token({
+            "sub": str(usuario.id),
+            "email": usuario.email,
+            "es_admin": usuario.es_admin
+        })
         return {
             "access_token": token,
             "token_type": "bearer",
-            "usuario": {"id": usuario.id, "nombre": usuario.nombre, "email": usuario.email}
+            "usuario": {
+                "id": usuario.id,
+                "nombre": usuario.nombre,
+                "email": usuario.email,
+                "es_admin": usuario.es_admin
+            }
         }
 
     async def solicitar_recuperacion(self, db: Session, email: str):
@@ -58,3 +95,12 @@ class AuthService:
         nuevo_hash = hashear_password(nueva_password)
         usuario_repo.actualizar_password(db, usuario, nuevo_hash)
         return {"mensaje": "Contraseña actualizada correctamente"}
+
+    @staticmethod
+    def validar_precio_admin(precio: float):
+        """Restricción: ninguna joya puede venderse por menos de $200.000 COP."""
+        if precio < PRECIO_MINIMO:
+            raise ValueError(
+                f"El precio mínimo permitido es ${PRECIO_MINIMO:,.0f} COP. "
+                f"Precio ingresado: ${precio:,.0f} COP."
+            )

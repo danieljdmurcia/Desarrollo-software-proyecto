@@ -68,19 +68,29 @@ if (backButton) {
 
 // ── SESIÓN ──
 function verificarSesion() {
-    const usuarioStr = localStorage.getItem("usuario");
-    const labelLogin = document.getElementById("label-login");
-    const btnLogin = document.getElementById("btn-login");
+    const usuarioStr     = localStorage.getItem("usuario");
+    const labelLogin     = document.getElementById("label-login");
+    const btnLogin       = document.getElementById("btn-login");
     const dropdownSesion = document.getElementById("dropdown-sesion");
-    const btnCerrar = document.getElementById("btn-cerrar-sesion");
+    const btnCerrar      = document.getElementById("btn-cerrar-sesion");
+    const btnAdmin       = document.getElementById("btn-admin-panel");   // ← nuevo
 
     if (usuarioStr && labelLogin) {
         const u = JSON.parse(usuarioStr);
         labelLogin.textContent = u.usuario || u.nombre;
-        btnLogin.href = "#";
+        btnLogin.href  = "#";
         btnLogin.title = u.usuario || u.nombre;
 
         if (dropdownSesion) dropdownSesion.removeAttribute("style");
+
+        // ── Mostrar enlace al panel admin solo si es @vulcaria ──
+        if (btnAdmin) {
+            if (u.es_admin) {
+                btnAdmin.style.display = "inline-flex";
+            } else {
+                btnAdmin.style.display = "none";
+            }
+        }
 
         if (btnCerrar) {
             btnCerrar.addEventListener("mouseover", () => {
@@ -98,6 +108,7 @@ function verificarSesion() {
         }
     } else {
         if (dropdownSesion) dropdownSesion.style.display = "none";
+        if (btnAdmin) btnAdmin.style.display = "none";
     }
 }
 verificarSesion();
