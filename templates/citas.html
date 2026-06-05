@@ -149,9 +149,13 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 <script>
     // ── FLATPICKR FECHA CITA ──
+    const hoy = new Date();
+    const maxCita = new Date(hoy.getFullYear() + 1, hoy.getMonth(), hoy.getDate());
+
     flatpickr("#fecha", {
         locale: "es",
         minDate: "today",
+        maxDate: maxCita,
         disable: [
             function(date) {
                 return date.getDay() === 0 || date.getDay() === 1 || date.getDay() === 6;
@@ -166,6 +170,20 @@
         locale: "es",
         maxDate: "today",
         dateFormat: "Y-m-d",
+        onChange: function(selectedDates) {
+            if (selectedDates.length > 0) {
+                const nacimiento = selectedDates[0];
+                let edad = hoy.getFullYear() - nacimiento.getFullYear();
+                const m = hoy.getMonth() - nacimiento.getMonth();
+                if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) {
+                    edad--;
+                }
+                if (edad < 18) {
+                    alert(" Debes ser mayor de edad (18 años o más) para agendar una cita.");
+                    document.getElementById("fecha_nacimiento")._flatpickr.clear();
+                }
+            }
+        }
     });
 
     // ── VALIDACIONES ──
