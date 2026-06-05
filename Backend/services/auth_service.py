@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from Backend.security import hashear_password, verificar_password, crear_token
 from Backend.repository import usuario_repo
 from Backend.email_service import enviar_email_recuperacion
@@ -17,12 +18,21 @@ class AuthService:
         if len(password) < 8:
             raise ValueError("La contraseña debe tener al menos 8 caracteres")
 
+        # Verificar si el nombre de usuario ya existe
+        if usuario_repo.obtener_por_usuario(db, usuario):
+            raise ValueError("Ese nombre de usuario ya está en uso")
+
         # Detectar si el correo es @vulcaria → es admin
         dominio = email.split("@")[-1].split(".")[0].lower()
         es_admin = dominio == DOMINIO_ADMIN
 
         hash_pw = hashear_password(password)
-        nuevo = usuario_repo.crear_usuario(db, nombre, usuario, email, hash_pw, es_admin)
+        try:
+            nuevo = usuario_repo.crear_usuario(db, nombre, usuario, email, hash_pw, es_admin)
+        except IntegrityError:
+            db.rollback()
+            raise ValueError("El nombre de usuario o correo ya está registrado")
+
         token = crear_token({
             "sub": str(nuevo.id),
             "email": nuevo.email,

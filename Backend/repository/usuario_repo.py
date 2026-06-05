@@ -11,12 +11,15 @@ def obtener_por_id(db: Session, usuario_id: int) -> Usuario | None:
     return db.query(Usuario).filter(Usuario.id == usuario_id).first()
 
 
+def obtener_por_usuario(db: Session, usuario: str) -> Usuario | None:
+    return db.query(Usuario).filter(Usuario.usuario == usuario).first()
+
+
 def obtener_por_reset_token(db: Session, token: str) -> Usuario | None:
     return db.query(Usuario).filter(Usuario.reset_token == token).first()
 
 
 def crear_usuario(db: Session, nombre: str, usuario: str, email: str, password_hash: str, es_admin: bool = False):
-    # ← añadido es_admin con default False para no romper llamadas existentes
     nuevo = Usuario(
         nombre=nombre,
         usuario=usuario,
