@@ -72,10 +72,7 @@
         opacity: 0;
     }
 }
-@keyframes animate {
-    0%   { transform: translateY(0) rotate(0deg);       opacity: 1; border-radius: 0; }
-    100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; border-radius: 50%; }
-}
+
 
 /* ── HERO ── */
 .citas-hero {
@@ -293,7 +290,11 @@ span.flatpickr-weekday {
 
 /* ── MODO CLARO ── */
 body.light .citas-bg {
-    background: linear-gradient(135deg, #dde3f0, #e8d5dc, #f0e6ee);
+    background: var(--bg);
+}
+
+body.light .login-cubes .cube {
+    border-color: rgba(99,108,131,0.4);
 }
 
 body.light .circles li {
