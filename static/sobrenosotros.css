@@ -1,0 +1,328 @@
+/* =============================================
+   SOBRENOSOTROS.CSS — Vulcaria
+   Usa variables de style.css
+   ============================================= */
+
+html { scroll-behavior: smooth; }
+
+.sn-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: inline-block;
+}
+
+.nav-active {
+    color: var(--accent) !important;
+    border-bottom: 1px solid var(--accent);
+    padding-bottom: 2px;
+}
+
+/* ── HERO ── */
+.sn-hero {
+    position: relative;
+    min-height: 520px;
+    display: flex;
+    align-items: center;
+    background-image: url(/static/images/general2.jpg);
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    padding-top: 60px;
+}
+
+.sn-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.45) 100%);
+}
+
+.sn-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 1140px;
+    width: 90%;
+    margin: 0 auto;
+    padding: 100px 20px 80px;
+}
+
+.sn-hero-content h1 {
+    font-size: 68px;
+    line-height: 1.05;
+    font-weight: 700;
+    color: #f9f9f9;
+    text-transform: uppercase;
+    margin: 14px 0 24px;
+}
+
+.sn-hero-content h1 em {
+    font-style: normal;
+    color: #aaaaaa;
+}
+
+.sn-hero-content p {
+    font-size: 17px;
+    color: #dddddd;
+    max-width: 520px;
+    line-height: 1.8;
+}
+
+/* ── QUIÉNES SOMOS ── */
+.sn-quienes {
+    display: flex;
+    align-items: center;
+    gap: 80px;
+    padding: 110px 20px;
+}
+
+.sn-quienes-texto { flex: 1; }
+
+.sn-quienes-texto h2 {
+    font-size: 56px;
+    line-height: 1.1;
+    margin-bottom: 0;
+    color: var(--text);
+}
+
+.sn-quienes-imagen {
+    flex: 1;
+    position: relative;
+}
+
+.sn-quienes-imagen img {
+    width: 100%;
+    height: 480px;
+    object-fit: cover;
+    border-radius: 20px;
+    display: block;
+}
+
+.sn-imagen-badge {
+    position: absolute;
+    bottom: -18px;
+    left: -18px;
+    background-color: var(--accent);
+    color: var(--text);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 16px 28px;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+}
+
+/* ── HISTORIA ── */
+.sn-historia {
+    display: flex;
+    align-items: stretch;
+    min-height: 500px;
+    background-color: var(--surface);
+}
+
+.sn-historia-img {
+    width: 25%;
+    overflow: hidden;
+}
+
+.sn-historia-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 0.75;
+}
+
+.sn-historia-texto {
+    flex: 1;
+    padding: 80px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.sn-historia-texto h2 {
+    font-size: 52px;
+    line-height: 1.1;
+    margin-bottom: 28px;
+    color: var(--text);
+}
+
+.sn-historia-texto p {
+    color: var(--text-soft);
+    font-size: 16px;
+    line-height: 1.85;
+    max-width: 560px;
+}
+
+/* ── TIPOS ── */
+.sn-tipos {
+    padding: 110px 20px;
+    background-color: var(--bg);
+}
+
+.sn-tipos h2 {
+    margin-bottom: 50px;
+    color: var(--text);
+}
+
+.sn-tipos-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-top: 50px;
+}
+
+.sn-tipo-card {
+    background-color: var(--surface);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+.sn-tipo-card:hover { transform: translateY(-8px); }
+
+.sn-tipo-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+    background-color: var(--bg);
+    padding: 20px;
+}
+
+.sn-tipo-info { padding: 22px; }
+
+.sn-tipo-info h3 {
+    font-size: 20px;
+    color: var(--text);
+    margin-bottom: 10px;
+}
+
+.sn-tipo-info p {
+    color: var(--text-soft);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+/* ── EQUIPO ── */
+.sn-equipo {
+    background-color: var(--surface);
+    padding: 110px 0;
+}
+
+.sn-equipo h2 {
+    margin-bottom: 0;
+    color: var(--text);
+}
+
+.sn-equipo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 60px;
+}
+
+.sn-equipo-card {
+    background-color: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 40px 30px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.sn-equipo-card:hover { transform: translateY(-6px); }
+
+.sn-equipo-card--featured {
+    background-color: rgba(0,0,0,0.3);
+    border-color: rgba(255,255,255,0.2);
+    transform: translateY(-12px);
+}
+
+.sn-equipo-card--featured:hover { transform: translateY(-18px); }
+
+.sn-equipo-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto 24px;
+    border: 3px solid var(--accent);
+}
+
+.sn-equipo-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.sn-equipo-card h3 {
+    font-size: 20px;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+
+.sn-equipo-rol {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+}
+
+.sn-equipo-card p {
+    color: var(--text-soft);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.footer-bottom {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--surface);
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted, #64748b);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 991px) {
+
+    .sn-hero-content h1 { font-size: 38px; }
+
+    .sn-quienes {
+        flex-direction: column;
+        gap: 40px;
+        padding: 70px 20px;
+    }
+
+    .sn-quienes-texto h2 { font-size: 38px; }
+    .sn-imagen-badge { left: 10px; bottom: -12px; }
+
+    .sn-historia { flex-direction: column; }
+    .sn-historia-img { width: 100%; height: 250px; }
+    .sn-historia-texto { padding: 50px 30px; }
+    .sn-historia-texto h2 { font-size: 36px; }
+    .sn-historia-img-right { display: none; }
+
+    .sn-tipos-grid { grid-template-columns: repeat(2, 1fr); }
+    .sn-equipo-grid { grid-template-columns: 1fr; }
+    .sn-equipo-card--featured { transform: translateY(0); }
+
+    .sn-blog-articulo,
+    .sn-blog-articulo--reverse {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .sn-blog-articulo-img { width: 100%; }
+    .sn-tipos  { padding: 70px 20px; }
+    .sn-equipo { padding: 70px 0; }
+    .sn-blog   { padding: 70px 0; }
+}
+
+@media (max-width: 600px) {
+    .sn-tipos-grid { grid-template-columns: 1fr; }
+    .sn-hero-content h1 { font-size: 30px; }
+}

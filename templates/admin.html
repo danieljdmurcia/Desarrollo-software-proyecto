@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Vulcaria</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/Admin.css">
+    <style>
+        .img-preview {
+            width: 48px; height: 48px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid rgba(234,232,235,0.2);
+        }
+        .error-msg   { color: #d94a4a; font-size: 13px; margin-top: 8px; display: none; }
+        .success-msg { color: #7ecfa0; font-size: 13px; margin-top: 8px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="glow"></div>
+
+<header>
+    <div class="logo">Vulcaria</div>
+    <nav>
+        <a href="/">← Volver al sitio</a>
+    </nav>
+</header>
+
+<!-- LOGIN (se oculta si ya hay sesión @vulcaria activa) -->
+<div id="loginPanel">
+    <h2>Admin Panel</h2>
+    <p>Acceso restringido — solo personal autorizado <strong>@vulcaria</strong></p>
+    <input type="email"    id="adminEmail"    placeholder="Correo @vulcaria">
+    <input type="password" id="adminPassword" placeholder="Contraseña"
+           onkeydown="if(event.key==='Enter') login()">
+    <button class="btn-1" onclick="login()">Ingresar</button>
+    <p id="error">Correo o contraseña incorrectos ❌</p>
+</div>
+
+<!-- PANEL ADMIN -->
+<div id="adminPanel">
+    <div class="admin-container">
+        <h1>Inventario</h1>
+        <p class="subtitulo">
+            Gestiona las joyas disponibles en Vulcaria. Agrega, edita o suspende productos del catálogo.<br>
+            <strong>Restricciones:</strong> precio mínimo $200.000 COP · los productos no pueden eliminarse, solo suspenderse ·
+            si las unidades llegan a 0 el producto queda marcado como agotado.
+        </p>
+
+        <!-- Formulario agregar -->
+        <div class="form-section">
+            <h3>Agregar Joya</h3>
+            <div class="form-group">
+                <input type="text"   id="nombre"     placeholder="Nombre de la joya">
+                <input type="number" id="precio"     placeholder="Precio (mín. $200.000)" min="200000" step="1000">
+                <input type="number" id="unidades"   placeholder="Unidades" min="0" step="1">
+                <select id="categoria">
+                    <option value="general">Categoría</option>
+                    <option value="anillos">Anillos</option>
+                    <option value="aretes">Aretes</option>
+                    <option value="collares">Collares</option>
+                    <option value="pulseras">Pulseras</option>
+                </select>
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <input type="text" id="imagen_url" placeholder="URL de imagen (opcional)" style="flex:1; min-width:180px;">
+                    <label style="cursor:pointer; background:#3a2a2e; border:1px solid rgba(234,232,235,0.2);
+                                  border-radius:8px; padding:10px 14px; font-size:12px; color:#eae8eb; white-space:nowrap;">
+                        📁 Subir imagen
+                        <input type="file" id="imagen_file" accept="image/*" style="display:none"
+                               onchange="subirImagen('imagen_url', 'preview-nueva', this)">
+                    </label>
+                </div>
+                <img id="preview-nueva" src="" alt="" style="display:none; width:80px; height:80px;
+                     object-fit:cover; border-radius:8px; border:1px solid rgba(234,232,235,0.2); margin-top:4px;">
+                <button class="btn-agregar" onclick="agregarProducto()">Agregar &#8599;</button>
+            </div>
+            <p class="error-msg"   id="error-agregar"></p>
+            <p class="success-msg" id="success-agregar"></p>
+        </div>
+
+        <!-- Tabla -->
+        <div class="tabla-section">
+            <h3>Productos en inventario</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Unidades</th>
+                        <th>Categoría</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaProductos">
+                    <tr><td colspan="8" class="tabla-vacia">Cargando inventario...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API   = "";
+    const token = localStorage.getItem("token");
+
+    // ── Verificar sesión @vulcaria al cargar ──
+    (function verificarAdmin() {
+        const usuarioStr = localStorage.getItem("usuario");
+        if (usuarioStr) {
+            const u = JSON.parse(usuarioStr);
+            if (u.es_admin) {
+                document.getElementById("loginPanel").style.display = "none";
+                document.getElementById("adminPanel").style.display = "block";
+                cargarProductos();
+                return;
+            }
+        }
+        document.getElementById("loginPanel").style.display = "flex";
+        document.getElementById("adminPanel").style.display = "none";
+    })();
+
+    // ── Login desde el panel ──
+    async function login() {
+        const email    = document.getElementById("adminEmail").value.trim();
+        const password = document.getElementById("adminPassword").value;
+        const errEl    = document.getElementById("error");
+        errEl.style.display = "none";
+
+        if (!email.includes("@vulcaria")) {
+            errEl.textContent = "Solo cuentas @vulcaria pueden acceder ❌";
+            errEl.style.display = "block";
+            return;
+        }
+
+        const res = await fetch(`${API}/api/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            if (!data.usuario.es_admin) {
+                errEl.textContent = "Esta cuenta no tiene permisos de admin ❌";
+                errEl.style.display = "block";
+                return;
+            }
+            localStorage.setItem("token",   data.access_token);
+            localStorage.setItem("usuario", JSON.stringify(data.usuario));
+            document.getElementById("loginPanel").style.display = "none";
+            document.getElementById("adminPanel").style.display = "block";
+            cargarProductos();
+        } else {
+            errEl.style.display = "block";
+        }
+    }
+
+    // ── Cargar productos ──
+    async function cargarProductos() {
+        try {
+            const res       = await fetch(`${API}/api/productos`);
+            const productos = await res.json();
+            renderTabla(productos);
+        } catch (err) {
+            document.getElementById("tablaProductos").innerHTML =
+                `<tr><td colspan="8" class="tabla-vacia">Error al conectar con el servidor ❌</td></tr>`;
+        }
+    }
+
+    function renderTabla(productos) {
+        const tabla = document.getElementById("tablaProductos");
+        if (!productos.length) {
+            tabla.innerHTML = `<tr><td colspan="8" class="tabla-vacia">No hay joyas en el inventario aún.</td></tr>`;
+            return;
+        }
+
+        tabla.innerHTML = productos.map(p => {
+            // Estado
+            let estadoHTML;
+            if (!p.disponible) {
+                estadoHTML = `<span class="disponible-no">○ Suspendido</span>`;
+            } else if ((p.unidades ?? 0) === 0) {
+                estadoHTML = `<span class="disponible-no">○ Agotado</span>`;
+            } else {
+                estadoHTML = `<span class="disponible-si">● Disponible</span>`;
+            }
+
+            const imgHTML = p.imagen_url
+                ? `<img src="${p.imagen_url}" class="img-preview" alt="${p.nombre}">`
+                : `<span style="color:#eae8eb;font-size:11px;">—</span>`;
+
+            // Suspender o Activar — nunca Eliminar
+            const accionDisp = p.disponible
+                ? `<button class="btn-delete" onclick="suspenderProducto(${p.id})">Suspender</button>`
+                : `<button class="btn-edit"   onclick="activarProducto(${p.id})" style="margin-left:8px">Activar</button>`;
+
+            const imgVal = (p.imagen_url || '').replace(/'/g, "\\'");
+
+            return `
+            <tr id="fila-${p.id}">
+                <td>${p.id}</td>
+                <td>${imgHTML}</td>
+                <td>${p.nombre}</td>
+                <td>$${Number(p.precio).toLocaleString('es-CO')}</td>
+                <td>${p.unidades ?? 0}</td>
+                <td>${p.categoria || 'general'}</td>
+                <td>${estadoHTML}</td>
+                <td>
+                    <button class="btn-edit" onclick="abrirEdicion(${p.id}, '${p.nombre}', ${p.precio}, ${p.unidades ?? 0}, '${p.categoria || 'general'}', '${imgVal}')">Editar</button>
+                    ${accionDisp}
+                </td>
+            </tr>
+            <tr id="edicion-${p.id}" style="display:none; background:rgba(88,79,80,0.5)">
+                <td colspan="8" style="padding:20px;">
+                    <div class="form-group">
+                        <input type="text"   id="edit-nombre-${p.id}"   placeholder="Nombre">
+                        <input type="number" id="edit-precio-${p.id}"   placeholder="Precio" min="200000" step="1000">
+                        <input type="number" id="edit-unidades-${p.id}" placeholder="Unidades" min="0">
+                        <select id="edit-categoria-${p.id}">
+                            <option value="general">General</option>
+                            <option value="anillos">Anillos</option>
+                            <option value="aretes">Aretes</option>
+                            <option value="collares">Collares</option>
+                            <option value="pulseras">Pulseras</option>
+                        </select>
+                        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                            <input type="text" id="edit-imagen-${p.id}" placeholder="URL imagen" style="flex:1; min-width:150px;">
+                            <label style="cursor:pointer; background:#3a2a2e; border:1px solid rgba(234,232,235,0.2);
+                                          border-radius:8px; padding:8px 12px; font-size:12px; color:#eae8eb; white-space:nowrap;">
+                                📁 Subir
+                                <input type="file" id="edit-file-${p.id}" accept="image/*" style="display:none"
+                                       onchange="subirImagen('edit-imagen-${p.id}', 'edit-preview-${p.id}', this)">
+                            </label>
+                        </div>
+                        <img id="edit-preview-${p.id}" src="${p.imagen_url || ''}" alt=""
+                             style="${p.imagen_url ? '' : 'display:none;'} width:60px; height:60px;
+                             object-fit:cover; border-radius:6px; margin-top:4px;">
+                        <button class="btn-agregar" onclick="guardarEdicion(${p.id})">Guardar</button>
+                        <button class="btn-delete"  onclick="cerrarEdicion(${p.id})" style="margin-left:0">Cancelar</button>
+                    </div>
+                    <p class="error-msg"   id="error-edit-${p.id}"></p>
+                    <p class="success-msg" id="success-edit-${p.id}"></p>
+                </td>
+            </tr>`;
+        }).join('');
+    }
+
+    // ── Agregar producto ──
+    async function agregarProducto() {
+        const nombre    = document.getElementById("nombre").value.trim();
+        const precio    = parseFloat(document.getElementById("precio").value);
+        const unidades  = parseInt(document.getElementById("unidades").value) || 0;
+        const categoria = document.getElementById("categoria").value;
+        const imagen    = document.getElementById("imagen_url").value.trim();
+        const errEl     = document.getElementById("error-agregar");
+        const okEl      = document.getElementById("success-agregar");
+
+        errEl.style.display = "none";
+        okEl.style.display  = "none";
+
+        if (!nombre) {
+            errEl.textContent = "El nombre es obligatorio.";
+            errEl.style.display = "block"; return;
+        }
+        if (!precio || precio < 200000) {
+            errEl.textContent = "El precio mínimo permitido es $200.000 COP.";
+            errEl.style.display = "block"; return;
+        }
+
+        const res = await fetch(`${API}/api/productos`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({
+                nombre, precio,
+                disponible: unidades > 0,
+                unidades, categoria,
+                imagen_url: imagen || null
+            })
+        });
+
+        if (res.ok) {
+            okEl.textContent = "✓ Producto añadido correctamente.";
+            okEl.style.display = "block";
+            document.getElementById("nombre").value     = "";
+            document.getElementById("precio").value     = "";
+            document.getElementById("unidades").value   = "";
+            document.getElementById("imagen_url").value = "";
+            document.getElementById("categoria").value  = "general";
+            cargarProductos();
+        } else {
+            const data = await res.json().catch(() => ({}));
+            errEl.textContent = data.detail || "Error al añadir el producto.";
+            errEl.style.display = "block";
+        }
+    }
+
+    // ── Suspender (nunca eliminar) ──
+    async function suspenderProducto(id) {
+        if (!confirm("¿Suspender este producto? No se eliminará, solo dejará de estar disponible.")) return;
+        const res = await fetch(`${API}/api/productos/${id}/suspender`, {
+            method: "PATCH",
+            headers: { "Authorization": "Bearer " + token }
+        });
+        if (res.ok) cargarProductos();
+        else alert("Error al suspender el producto.");
+    }
+
+    // ── Activar ──
+    async function activarProducto(id) {
+        const res = await fetch(`${API}/api/productos/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({ disponible: true })
+        });
+        if (res.ok) cargarProductos();
+        else alert("Error al activar el producto.");
+    }
+
+    // ── Edición inline ──
+    function abrirEdicion(id, nombre, precio, unidades, categoria, imagen) {
+        document.getElementById(`edit-nombre-${id}`).value    = nombre;
+        document.getElementById(`edit-precio-${id}`).value    = precio;
+        document.getElementById(`edit-unidades-${id}`).value  = unidades;
+        document.getElementById(`edit-imagen-${id}`).value    = imagen;
+        const sel = document.getElementById(`edit-categoria-${id}`);
+        for (let o of sel.options) { if (o.value === categoria) { o.selected = true; break; } }
+        document.getElementById(`edicion-${id}`).style.display = "table-row";
+    }
+
+    function cerrarEdicion(id) {
+        document.getElementById(`edicion-${id}`).style.display = "none";
+    }
+
+    async function guardarEdicion(id) {
+        const nombre    = document.getElementById(`edit-nombre-${id}`).value.trim();
+        const precio    = parseFloat(document.getElementById(`edit-precio-${id}`).value);
+        const unidades  = parseInt(document.getElementById(`edit-unidades-${id}`).value) || 0;
+        const categoria = document.getElementById(`edit-categoria-${id}`).value;
+        const imagen    = document.getElementById(`edit-imagen-${id}`).value.trim();
+        const errEl     = document.getElementById(`error-edit-${id}`);
+        const okEl      = document.getElementById(`success-edit-${id}`);
+
+        errEl.style.display = "none";
+        okEl.style.display  = "none";
+
+        if (!nombre) {
+            errEl.textContent = "El nombre es obligatorio.";
+            errEl.style.display = "block"; return;
+        }
+        if (!precio || precio < 200000) {
+            errEl.textContent = "El precio mínimo es $200.000 COP.";
+            errEl.style.display = "block"; return;
+        }
+
+        const res = await fetch(`${API}/api/productos/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({
+                nombre, precio,
+                disponible: unidades > 0,
+                unidades, categoria,
+                imagen_url: imagen || null
+            })
+        });
+
+        if (res.ok) {
+            okEl.textContent = "✓ Guardado correctamente.";
+            okEl.style.display = "block";
+            setTimeout(() => { cerrarEdicion(id); cargarProductos(); }, 900);
+        } else {
+            const data = await res.json().catch(() => ({}));
+            errEl.textContent = data.detail || "Error al guardar.";
+            errEl.style.display = "block";
+        }
+    }
+    // ── Subir imagen al servidor ──
+    async function subirImagen(inputId, previewId, fileInput) {
+        const urlInput = document.getElementById(inputId);
+        const preview  = document.getElementById(previewId);
+        const file     = fileInput.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const res = await fetch("/api/upload-imagen", { method: "POST", body: formData });
+            if (res.ok) {
+                const data = await res.json();
+                urlInput.value = data.url;
+                if (preview) {
+                    preview.src = data.url;
+                    preview.style.display = "block";
+                }
+            } else {
+                alert("Error al subir la imagen. Solo se permiten JPG, PNG, WEBP o GIF.");
+            }
+        } catch (e) {
+            alert("Error de conexión al subir la imagen.");
+        }
+    }
+</script>
+
+</body>
+</html>

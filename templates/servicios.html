@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Servicios — Vulcaria{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/servicios.css">
+{% endblock %}
+
+{% block content %}
+
+    <section class="srv-hero">
+        <h1>Nuestros Servicios</h1>
+        <div class="srv-hero-img">
+            <img src="/static/images/servicios/servicio1.jpg" alt="Servicios Vulcaria">
+        </div>
+        <p>Forjado en dedicación, pulido con pasión. Como Vulcano ante su fragua, cada servicio que ofrecemos lleva la precisión y el fuego de quien ama lo que hace.</p>
+    </section>
+
+    <section class="srv-section">
+        <div class="srv-grid">
+
+            <div class="srv-card">
+                <img src="/static/images/servicios/servicio1.jpg" alt="Personalización">
+                <div class="srv-card-text">
+                    <h3>Personalización</h3>
+                    <p>Creamos piezas únicas diseñadas especialmente para ti. Cada detalle refleja tu personalidad y estilo.</p>
+                </div>
+            </div>
+
+            <div class="srv-card">
+                <img src="/static/images/servicios/servicio2.jpg" alt="Reparación">
+                <div class="srv-card-text">
+                    <h3>Reparación</h3>
+                    <p>Le devolvemos la vida a tus joyas más preciadas. Reparamos y restauramos con el mismo cuidado con que fueron creadas.</p>
+                </div>
+            </div>
+
+            <div class="srv-card">
+                <img src="/static/images/servicios/servicio3.jpg" alt="Asesoría">
+                <div class="srv-card-text">
+                    <h3>Asesoría</h3>
+                    <p>¿No sabes qué joya elegir? Te guiamos para encontrar la pieza perfecta para cada ocasión y estilo.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="srv-cta">
+        <h2>¿Listo para empezar?</h2>
+        <p>Agenda una consulta con nosotros y hagamos realidad tu joya ideal.</p>
+        <a href="/citas" class="btn-consulta">Consulta</a>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content container">
+            <div class="link">
+                <h3>Vulcaria</h3>
+                <ul>
+                    <li><a href="/sobre-nosotros">Sobre nosotros</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                </ul>
+            </div>
+            <div class="link">
+                <h3>Productos</h3>
+                <ul>
+                    <li><a href="#">Anillos</a></li>
+                    <li><a href="#">Aretes</a></li>
+                    <li><a href="#">Collares</a></li>
+                    <li><a href="#">Pulseras</a></li>
+                </ul>
+            </div>
+            <div class="link">
+                <h3>Contacto</h3>
+                <ul>
+                    <li><a href="#">WhatsApp</a></li>
+                    <li><a href="#">Correo</a></li>
+                    <li><a href="#">Ubicación</a></li>
+                </ul>
+            </div>
+            <div class="link">
+                <h3>Síguenos</h3>
+                <ul>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">TikTok</a></li>
+                    <li><a href="#">Pinterest</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom container">
+            <p>© 2026 Vulcaria. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const cards = document.querySelectorAll('.srv-card');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+    }, { threshold: 0.15 });
+    cards.forEach(card => observer.observe(card));
+</script>
+{% endblock %}

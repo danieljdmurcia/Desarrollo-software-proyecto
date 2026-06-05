@@ -36,3 +36,11 @@ def verificar_token(token: str) -> dict | None:
         return payload
     except JWTError:
         return None
+
+
+def es_admin_token(token: str) -> bool:
+    """Verifica si el token JWT pertenece a un usuario admin (@vulcaria)."""
+    payload = verificar_token(token)
+    if not payload:
+        return False
+    return bool(payload.get("es_admin", False))
