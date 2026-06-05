@@ -1,11 +1,13 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class ProductoSchema(BaseModel):
     nombre: str
     precio: float
-    disponible: bool = True
-    imagen_url: str = None   # NUEVO
-    categoria: str = "general"  # NUEVO
+    disponible: bool
+    unidades: Optional[int]   = 0       # ← nuevo: stock
+    categoria: Optional[str]  = "general"  # ← nuevo: categoría
+    imagen_url: Optional[str] = None    # ← nuevo: URL de imagen
 
 class CitaSchema(BaseModel):
     nombre: str

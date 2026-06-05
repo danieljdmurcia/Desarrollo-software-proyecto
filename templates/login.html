@@ -2,8 +2,91 @@
 {% block title %}Iniciar Sesión — Vulcaria{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="/static/login.css">
+<style>
+    /* Modal de elección para admin */
+    .admin-choice-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.75);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        backdrop-filter: blur(6px);
+    }
+    .admin-choice-box {
+        background: #1c1015;
+        border: 1px solid rgba(201,168,76,0.3);
+        border-radius: 20px;
+        padding: 48px 40px;
+        text-align: center;
+        max-width: 420px;
+        width: 90%;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .admin-choice-box h2 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #f9f9f9;
+        margin-bottom: 8px;
+    }
+    .admin-choice-box p {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.85rem;
+        color: #eae8eb;
+        margin-bottom: 36px;
+    }
+    .admin-choice-btns {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .choice-btn {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 14px 28px;
+        border-radius: 30px;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.2s, background 0.2s;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .choice-btn:hover { transform: translateY(-2px); }
+    .choice-btn-admin {
+        background: #c9a84c;
+        color: #1c1015;
+    }
+    .choice-btn-admin:hover { background: #e0be6a; }
+    .choice-btn-site {
+        background: transparent;
+        color: #f9f9f9;
+        border: 1px solid rgba(249,249,249,0.3);
+    }
+    .choice-btn-site:hover { border-color: #f9f9f9; }
+    .choice-icon { font-size: 2rem; margin-bottom: 16px; }
+</style>
 {% endblock %}
 {% block content %}
+
+<!-- Modal de elección para admin (oculto por defecto) -->
+<div id="adminChoiceOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85);
+     align-items:center; justify-content:center; z-index:99999; backdrop-filter:blur(6px);">
+    <div class="admin-choice-box">
+        <div class="choice-icon">⚙️</div>
+        <h2>¡Bienvenido, administrador!</h2>
+        <p>¿A dónde quieres ir?</p>
+        <div class="admin-choice-btns">
+            <a href="/admin" class="choice-btn choice-btn-admin">Panel Admin</a>
+            <a href="/" class="choice-btn choice-btn-site">Ir al sitio</a>
+        </div>
+    </div>
+</div>
 
 <div class="login-modal active" id="loginModal">
     <div class="login-cubes">
@@ -80,12 +163,12 @@
 
         if (res.ok) {
             const data = await res.json();
-            localStorage.setItem("token", data.access_token);
+            localStorage.setItem("token",   data.access_token);
             localStorage.setItem("usuario", JSON.stringify(data.usuario));
 
-            // Si es admin @vulcaria → ir al panel de administración
+            // Si es admin @vulcaria → mostrar modal de elección
             if (data.usuario.es_admin) {
-                window.location.href = "/admin";
+                document.getElementById("adminChoiceOverlay").style.display = "flex";
             } else {
                 window.history.back();
             }
@@ -96,7 +179,7 @@
     }
 
     async function registrarse() {
-        // ── Leer valores PRIMERO (bug original: se usaban antes de declarar) ──
+        // Leer valores PRIMERO (bug original corregido)
         const nombre   = document.getElementById("reg-nombre").value.trim();
         const usuario  = document.getElementById("reg-usuario").value.trim();
         const email    = document.getElementById("reg-email").value.trim();
@@ -107,26 +190,21 @@
         error.style.display   = "none";
         success.style.display = "none";
 
-        // Validaciones
         if (!nombre) {
             error.textContent = "El nombre no puede estar vacío.";
-            error.style.display = "block";
-            return;
+            error.style.display = "block"; return;
         }
         if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) {
             error.textContent = "El nombre solo puede tener letras.";
-            error.style.display = "block";
-            return;
+            error.style.display = "block"; return;
         }
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             error.textContent = "Ingresa un correo válido con @ y dominio.";
-            error.style.display = "block";
-            return;
+            error.style.display = "block"; return;
         }
         if (password.length < 8) {
             error.textContent = "La contraseña debe tener al menos 8 caracteres.";
-            error.style.display = "block";
-            return;
+            error.style.display = "block"; return;
         }
 
         const res = await fetch("/api/auth/registro", {
@@ -137,19 +215,19 @@
 
         if (res.ok) {
             const data = await res.json();
-            localStorage.setItem("token", data.access_token);
+            localStorage.setItem("token",   data.access_token);
             localStorage.setItem("usuario", JSON.stringify(data.usuario));
-            success.textContent = "¡Cuenta creada! Redirigiendo...";
+            success.textContent = "¡Cuenta creada!";
             success.style.display = "block";
 
-            // Si registró con @vulcaria → ir directo al admin
             setTimeout(() => {
+                // Si registró con @vulcaria → mostrar modal de elección
                 if (data.usuario.es_admin) {
-                    window.location.href = "/admin";
+                    document.getElementById("adminChoiceOverlay").style.display = "flex";
                 } else {
                     window.history.back();
                 }
-            }, 1500);
+            }, 1000);
         } else {
             const data = await res.json();
             error.textContent = typeof data.detail === "string"
